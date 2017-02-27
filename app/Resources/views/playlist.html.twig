@@ -62,14 +62,14 @@
                 var playlistName = verbList[Math.floor(Math.random()*verbList.length)] + " " + nounList[Math.floor(Math.random()*nounList.length)];
                 var numLikes = Math.floor(Math.random()*120);
                 var playListArt = albumArt[Math.floor(Math.random()*albumArt.length)];
-                newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources/images/album-art\/" + playListArt + "\"><\/img>\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + playlistName + "\r\n\t\t\t<\/h>";
+                newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources\/images\/album-art\/" + playListArt + "\">\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + playlistName + "\r\n\t\t\t<\/h>";
 
                 var r = Math.round(Math.random()*4)+2;
 
                 for(i = 0; i < r; i++){
                     var songIcon = document.createElement("img");
                     songIcon.className = "songIcon";
-                    songIcon.src = "album-art/" + albumArt[Math.floor(Math.random()*albumArt.length)];
+                    songIcon.src = "resources/images/album-art/" + albumArt[Math.floor(Math.random()*albumArt.length)];
                     newPlaylist.appendChild(songIcon);
                 }
 
