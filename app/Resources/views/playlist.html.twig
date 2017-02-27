@@ -1,11 +1,17 @@
 {% extends 'base.html.twig' %}
 
+
+
 {% block title %}Beat Machine - Playlist View{% endblock %}
+
+
 
 {% block stylesheets %}
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playlist.css') }}">
 {% endblock %}
+
+
 
 {% block body %}
     <div class="header">
@@ -38,6 +44,8 @@
     </div>
 {% endblock %}
 
+
+
 {% block javascripts %}
     <script type="text/javascript">
         window.onload = function(){
@@ -50,8 +58,6 @@
         function appendNewPlaylist(){
             if((window.innerHeight + window.scrollY) >= document.body.offsetHeight)
             {
-                //document.body.style.background = "red";
-                //var playlistNames = ["Chilled Vibes", "Hype", "Smooth Jazz", "Heavy Rock", "Silent Study", "Winter Warmth", "Western Country", "Live Performance", "Dark Nights", "Forgotten Songs"];
                 var albumArt = ["1.png", "2.png", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.png", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.png", "15.jpg", "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg"];
 
                 var verbList = ["Chilled", "Relaxed", "Hardcore", "Epic", "Silent", "Smooth", "Electric", "Rowdy", "Saucy", "Extreme", "Insane", "Evening", "Morning"];
