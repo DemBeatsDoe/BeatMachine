@@ -8,9 +8,4 @@ A second year Computer Science group coursework project for University of Bath.
 Written in PHP using Symfony.
 
 Authors:
-Alistair Thomson
-Chris Frampton
-Elise Ratcliffe
-Jiew Pornpanit
-Matt Buckley
-Sophie O'Donnell
+Alistair Thomson, Chris Frampton, Elise Ratcliffe, Jiew Pornpanit, Matt Buckley, Sophie O'Donnell
