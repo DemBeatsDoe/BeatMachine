@@ -1,4 +1,16 @@
-BeatMachine
+BeatMachine - IP Group 8
 ===========
 
-A Symfony project created on February 24, 2017, 5:04 pm.
+Multi-platform social music player.
+
+A second year Computer Science group coursework project for University of Bath.
+
+Written in PHP using Symfony.
+
+Authors:
+Alistair Thomson
+Chris Frampton
+Elise Ratcliffe
+Jiew Pornpanit
+Matt Buckley
+Sophie O'Donnell
