@@ -1,0 +1,28 @@
+<html>
+<body>
+    <script>
+        function fetchData() {
+            xhttp = new XMLHttpRequest();
+            var data = "testing";
+            xhttp.open("POST", "{{ path('receiptFetchSystem') }}", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send('items=' + (data));
+
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    TableGenerator(xhttp.responseText);
+                }
+            }
+        }
+
+        function TableGenerator(response) {
+            var totalPrice = 0;
+            var arr = JSON.parse(response);
+            alert(arr);
+        }
+    </script>
+
+    <input type="button" value="Fetch Data" onclick="fetchData();">
+
+</body>
+</html>
