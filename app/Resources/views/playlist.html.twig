@@ -49,41 +49,54 @@
 {% block javascripts %}
     <script type="text/javascript">
         window.onload = function(){
-            window.onscroll = appendNewPlaylist;
-            appendNewPlaylist();
+            window.onscroll = requestNextPlaylist;
+            requestNextPlaylist();
             document.body.onclick = checkIfHeartClicked;
         };
 
+        var waitingForData = false;
+        function requestNextPlaylist() {
+            if((window.innerHeight + window.scrollY) >= document.body.offsetHeight && !waitingForData) {
+                //Make an AJAX call
+                xhttp = new XMLHttpRequest();
+                var data = "testing";
+                xhttp.open("GET", "{{ path('requestNextPlaylistForFeed') }}", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send('items=' + (data));
 
-        function appendNewPlaylist(){
-            if((window.innerHeight + window.scrollY) >= document.body.offsetHeight)
-            {
-                var albumArt = ["1.png", "2.png", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.png", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.png", "15.jpg", "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg"];
+                waitingForData = true;
 
-                var verbList = ["Chilled", "Relaxed", "Hardcore", "Epic", "Silent", "Smooth", "Electric", "Rowdy", "Saucy", "Extreme", "Insane", "Evening", "Morning"];
-                var nounList = ["Rock", "Jazz", "House", "Grime", "Songs", "Ballads", "Country", "Acoustic", "Acapella", "EDM", "Indie", "Bangers", "Hip Hop", "Disco", "Punk", "Death Metal", "Vibes"];
+                //Process the returned data
+                xhttp.onreadystatechange = function () {
+                    if (xhttp.readyState == 4 && xhttp.status == 200) {
+                        var playlistResponse = JSON.parse(xhttp.responseText);
+                        waitingForData = false;
 
-                var newPlaylist = document.createElement("div");
-                newPlaylist.className = "playlist";
-                var playlistName = verbList[Math.floor(Math.random()*verbList.length)] + " " + nounList[Math.floor(Math.random()*nounList.length)];
-                var numLikes = Math.floor(Math.random()*120);
-                var playListArt = albumArt[Math.floor(Math.random()*albumArt.length)];
-                newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources\/images\/album-art\/" + playListArt + "\">\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + "<a href=\"/playlist?id=" + Math.floor(Math.random()*1000) + "\">" + playlistName + "</a>" +"\r\n\t\t\t<\/h>";
+                        //Append this new playlist to the feed
+                        appendNewPlaylist(playlistResponse.name, playlistResponse.art, playlistResponse.likeCount, playlistResponse.songs);
 
-                var r = Math.round(Math.random()*4)+2;
-
-                for(i = 0; i < r; i++){
-                    var songIcon = document.createElement("img");
-                    songIcon.className = "songIcon";
-                    songIcon.src = "resources/images/album-art/" + albumArt[Math.floor(Math.random()*albumArt.length)];
-                    newPlaylist.appendChild(songIcon);
+                        //Request another playlist
+                        requestNextPlaylist();
+                    }
                 }
-
-                newPlaylist.innerHTML += "\r\n\t\t\t\r\n\t\t\t<div class=\"playlist-info-box\">\r\n\t\t\t\t<div class=\"playlist-heartButton\"><\/div>\r\n\t\t\t\t<div class=\"playlist-likeCount\">\r\n\t\t\t\t" + numLikes + "\r\n\t\t\t\t<\/div>\r\n\t\t\t\t<div class=\"playlist-shareButton\">\r\n\t\t\t\tShare\r\n\t\t\t\t<\/div>\r\n\t\t\t<\/div>";
-                document.getElementsByClassName("feed")[0].appendChild(newPlaylist);
-
-                appendNewPlaylist();
             }
+        }
+
+        function appendNewPlaylist(playlistName, playlistArt, numLikes, songArtArray){
+
+            var newPlaylist = document.createElement("div");
+            newPlaylist.className = "playlist";
+            newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources\/images\/album-art\/" + playlistArt + "\">\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + "<a href=\"/playlist?id=" + Math.floor(Math.random()*1000) + "\">" + playlistName + "</a>" +"\r\n\t\t\t<\/h>";
+
+            for(i = 0; i < songArtArray.length; i++){
+                var songIcon = document.createElement("img");
+                songIcon.className = "songIcon";
+                songIcon.src = "resources/images/album-art/" + songArtArray[i];
+                newPlaylist.appendChild(songIcon);
+            }
+
+            newPlaylist.innerHTML += "\r\n\t\t\t\r\n\t\t\t<div class=\"playlist-info-box\">\r\n\t\t\t\t<div class=\"playlist-heartButton\"><\/div>\r\n\t\t\t\t<div class=\"playlist-likeCount\">\r\n\t\t\t\t" + numLikes + "\r\n\t\t\t\t<\/div>\r\n\t\t\t\t<div class=\"playlist-shareButton\">\r\n\t\t\t\tShare\r\n\t\t\t\t<\/div>\r\n\t\t\t<\/div>";
+            document.getElementsByClassName("feed")[0].appendChild(newPlaylist);
         }
 
         function checkIfHeartClicked(e){
