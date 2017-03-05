@@ -12,8 +12,12 @@ class PlaylistController extends Controller
      */
     public function indexAction()
     {
+        $playlistSongs = array("Song1", "Song2", "Song3");
+
         return $this->render('users_playlist.html.twig', array(
             'playlistName' => 'Test Playlist',
+            'playlistAuthor' => 'User1',
+            'playlistSongs' => $playlistSongs,
         ));
     }
 }

@@ -1,13 +1,30 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Beat Machine - {{ playlistName }}{% endblock %}
+
 {% block stylesheets %}
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <style>
         body{
             background: #eeeeee;
         }
+        .header{
+            background-color: #2f364a;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 70px;
+            width: 100%;
+            z-index: 100;
+
+            font-family: 'Lato', sans-serif;
+            font-size: 28pt;
+            font-weight: 900;
+            text-align: center;
+            line-height: 70px;
+            color: #fefefe;
+        }
         .playlistBlock{
-            height: 500px;
             width:50%;
             /*max-width: 800px;*/
             margin: 0 auto;
@@ -15,19 +32,115 @@
             margin-bottom: 55px;
             background-color: #fefefe;
             position: relative;
-            padding: 20px;
+            padding: 30px;
+        }
+        .playlistHeader{
+            height: 130px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .playlistArt{
+            height: 100%;
+            position: relative;
+            float: left;
         }
         .playlistTitle{
+            position: relative;
+            left: 10px;
+
             font-family: 'Lato', sans-serif;
-            font-size: 18pt;
+            font-size: 20pt;
             font-weight: 900;
             color: #2f364a;
         }
+        .playlistAuthor{
+            position: relative;
+            left: 10px;
+            margin-top: 2px;
+
+            font-family: 'Lato', sans-serif;
+            font-size: 13pt;
+            color: #8f8f92;
+        }
+        .songsTable{
+            width: 100%;
+            font-family: 'Lato', sans-serif;
+            color: #57575a;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .songsTable tr {
+            border-bottom: 1px solid black;
+            border-color: #b4b4b7;
+        }
+        .songsTable th{
+            text-align: left;
+            padding-bottom: 6px;
+        }
+        .songsTable td{
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+        .songsTable #playing{
+            font-weight: bold;
+            color: #2f364a;
+        }
+
     </style>
 {% endblock %}
 
 {% block body %}
+    <div class="header">
+        BEAT MACHINE
+    </div>
+
     <div class="playlistBlock">
-        <div class="playlistTitle">{{ playlistName }}</div>
+        <div class="playlistHeader">
+            <img class="playlistArt" src="{{ asset('resources/images/album-art/1.png') }}">
+            <div class="playlistTitle">{{ playlistName }}</div>
+            <div class="playlistAuthor">Created by {{ playlistAuthor}}</div>
+        </div>
+
+        <table class="songsTable">
+
+            <thead>
+                <tr>
+                    <th>Length</th>
+                    <th>Song Name</th>
+                    <th>Artist</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for song in playlistSongs %}
+                    <tr>
+                        <td>
+                            2:31
+                        </td>
+                        <td>
+                            {{song}}
+                        </td>
+                        <td>
+                            Artist
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                <tr id="playing">
+                    <td>
+                        2:31
+                    </td>
+                    <td>
+                        Lol
+                    </td>
+                    <td>
+                        Artist
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
     </div>
 {% endblock %}
