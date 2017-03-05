@@ -10,6 +10,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DBTestController
 {
