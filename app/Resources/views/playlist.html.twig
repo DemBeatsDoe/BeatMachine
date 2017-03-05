@@ -22,7 +22,7 @@
         <div class="playlist">
             <img class="album-art" src="{{ asset('resources/images/album-art/1.png') }}">
             <h class="playlist-title">
-                <a href="/playlist">Chilled Vibes</a>
+                <a href="/playlist?id=1">Chilled Vibes</a>
             </h>
 
             <img class="songIcon" src="{{ asset('resources/images/album-art/2.png') }}">
@@ -68,7 +68,7 @@
                 var playlistName = verbList[Math.floor(Math.random()*verbList.length)] + " " + nounList[Math.floor(Math.random()*nounList.length)];
                 var numLikes = Math.floor(Math.random()*120);
                 var playListArt = albumArt[Math.floor(Math.random()*albumArt.length)];
-                newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources\/images\/album-art\/" + playListArt + "\">\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + "<a href=\"/playlist\">" + playlistName + "</a>" +"\r\n\t\t\t<\/h>";
+                newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources\/images\/album-art\/" + playListArt + "\">\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + "<a href=\"/playlist?id=" + Math.floor(Math.random()*1000) + "\">" + playlistName + "</a>" +"\r\n\t\t\t<\/h>";
 
                 var r = Math.round(Math.random()*4)+2;
 

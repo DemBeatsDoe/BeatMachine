@@ -55,6 +55,11 @@ h.playlist-title{
     color: #2f364a;
 }
 h.playlist-title a{
+    font-family: 'Lato', sans-serif;
+    font-size: 18pt;
+    font-weight: 900;
+    color: #2f364a;
+
     outline:none;
     text-decoration:none;
 }
