@@ -3,11 +3,30 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Empty Title{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/cssreset.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playlist.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playbar.css') }}">
+
+        {% block stylesheets %}
+        {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        {% block header %}
+            <div class="header">
+                BEAT MACHINE
+            </div>
+        {% endblock %}
         {% block body %}Empty body{% endblock %}
+        {% block playbar %}
+            <div class="playbar">
+                <div class="buttons">
+                    Playbar Controls Go Here
+                </div>
+            </div>
+        {% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
