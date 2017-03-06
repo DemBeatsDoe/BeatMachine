@@ -7,7 +7,7 @@
         body{
             background: #eeeeee;
         }
-        .profileBlock{
+        .profileOuterBlock{
             width:50%;
             /*max-width: 800px;*/
             margin: 0 auto;
@@ -17,8 +17,13 @@
             position: relative;
             padding: 30px;
         }
+        .profileInnerBlock{
+            width: 60%;
+            min-width: 500px;
+            margin: 0 auto;
+        }
         .profileHeader{
-            height: 130px;
+            height: 150px;
             position: relative;
             margin-bottom: 20px;
         }
@@ -26,14 +31,133 @@
             height: 100%;
             position: relative;
             float: left;
+            margin-right: 7%;
+        }
+        .profileName{
+            position: relative;
+            margin-top: 10px;
+            margin-bottom: 20px;
+
+            font-family: 'Lato', sans-serif;
+            font-size: 20pt;
+            font-weight: 900;
+            color: #2f364a;
+        }
+        .profileInfo{
+            position: relative;
+            margin-top: 12px;
+
+            font-family: 'Lato', sans-serif;
+            font-size: 15pt;
+            color: #8f8f92;
+        }
+        .counter{
+            margin-right: 9px;
+
+            font-family: 'Lato', sans-serif;
+            font-weight: 900;
+            color: #ff5500;
+        }
+        .playlistCollection{
+            margin-top: 40px;
+        }
+        .playlistCollectionTitle{
+            text-align: center;
+            margin: 40px;
+
+            font-family: 'Lato', sans-serif;
+            font-size: 17pt;
+            font-weight: 900;
+            color: #5e5e61;
         }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="profileBlock">
-        <div class="profileHeader">
-            <img class="profilePicture" src="">
+    <div class="profileOuterBlock">
+        <div class="profileInnerBlock">
+            <div class="profileHeader">
+                <img class="profilePicture" src="{{ asset('resources/images/default-avatar.png') }}">
+                <div class="profileName">{{ userName }}</div>
+                <div class="profileInfo"><span class="counter">12</span>Playlists Created</div>
+                <div class="profileInfo"><span class="counter">30</span>Likes on their Playlists</div>
+                <div class="profileInfo"><span class="counter">18</span>Shares on their Playlists</div>
+            </div>
+
+            <div class="playlistCollection">
+
+                <div class="playlistCollectionTitle">Users Playlists:</div>
+
+                <div class="playlist">
+                    <img class="album-art" src="{{ asset('resources/images/album-art/1.png') }}">
+                    <h class="playlist-title">
+                        <a href="/playlist?id=1">Chilled Vibes</a>
+                    </h>
+
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/2.png') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/3.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/4.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/12.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/19.jpg') }}">
+
+                    <div class="playlist-info-box">
+                        <div class="playlist-heartButton"></div>
+                        <div class="playlist-likeCount">
+                            67
+                        </div>
+                        <div class="playlist-shareButton">
+                            Share
+                        </div>
+                    </div>
+                </div>
+
+                <div class="playlist">
+                    <img class="album-art" src="{{ asset('resources/images/album-art/18.jpg') }}">
+                    <h class="playlist-title">
+                        <a href="/playlist?id=1">Silent Nights</a>
+                    </h>
+
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/14.png') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/16.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/15.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/7.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/6.jpg') }}">
+
+                    <div class="playlist-info-box">
+                        <div class="playlist-heartButton"></div>
+                        <div class="playlist-likeCount">
+                            67
+                        </div>
+                        <div class="playlist-shareButton">
+                            Share
+                        </div>
+                    </div>
+                </div>
+
+                <div class="playlist">
+                    <img class="album-art" src="{{ asset('resources/images/album-art/1.png') }}">
+                    <h class="playlist-title">
+                        <a href="/playlist?id=1">Chilled Vibes</a>
+                    </h>
+
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/2.png') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/3.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/4.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/12.jpg') }}">
+                    <img class="songIcon" src="{{ asset('resources/images/album-art/19.jpg') }}">
+
+                    <div class="playlist-info-box">
+                        <div class="playlist-heartButton"></div>
+                        <div class="playlist-likeCount">
+                            67
+                        </div>
+                        <div class="playlist-shareButton">
+                            Share
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 {% endblock %}
