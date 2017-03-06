@@ -61,6 +61,14 @@
             font-size: 13pt;
             color: #8f8f92;
         }
+        .playlistAuthor a{
+            font-family: 'Lato', sans-serif;
+            font-size: 13pt;
+            color: #8f8f92;
+
+            outline:none;
+            text-decoration:none;
+        }
         .songsTable{
             width: 100%;
             font-family: 'Lato', sans-serif;
@@ -93,7 +101,7 @@
         <div class="playlistHeader">
             <img class="playlistArt" src="{{ asset('resources/images/album-art/1.png') }}">
             <div class="playlistTitle">{{ playlistName }} {{ playlistID }}</div>
-            <div class="playlistAuthor">Created by {{ playlistAuthor}}</div>
+            <div class="playlistAuthor"><a href="/profile?id={{ authorID}}">Created by {{ playlistAuthor}}</a></div>
         </div>
 
         <table class="songsTable">

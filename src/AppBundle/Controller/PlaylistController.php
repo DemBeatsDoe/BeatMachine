@@ -22,6 +22,7 @@ class PlaylistController extends Controller
             'playlistID' => $playlistID,
             'playlistName' => 'Test Playlist',
             'playlistAuthor' => 'User1',
+            'authorID' => 100,
             'playlistSongs' => $playlistSongs,
         ));
     }
