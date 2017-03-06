@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Beat Machine - {{ userName }}{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        body{
+            background: #eeeeee;
+        }
+        .profileBlock{
+            width:50%;
+            /*max-width: 800px;*/
+            margin: 0 auto;
+            margin-top: 150px;
+            margin-bottom: 55px;
+            background-color: #fefefe;
+            position: relative;
+            padding: 30px;
+        }
+        .profileHeader{
+            height: 130px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .profilePicture{
+            height: 100%;
+            position: relative;
+            float: left;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="profileBlock">
+        <div class="profileHeader">
+            <img class="profilePicture" src="">
+        </div>
+    </div>
+{% endblock %}
