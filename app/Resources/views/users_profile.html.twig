@@ -88,18 +88,20 @@
 
                 <div class="playlistCollectionTitle">Users Playlists:</div>
 
+                {% for playlist in playlists %}
                 <div class="playlist">
-                    <img class="album-art" src="{{ asset('resources/images/album-art/1.png') }}">
+                    <img class="album-art" src="{{ playlist[2] }}">
                     <h class="playlist-title">
-                        <a href="/playlist?id=1">Chilled Vibes</a>
+                        <a href="/playlist?id={{ playlist[0] }}">{{ playlist[1] }}</a>
                     </h>
 
+<!--
                     <img class="songIcon" src="{{ asset('resources/images/album-art/2.png') }}">
                     <img class="songIcon" src="{{ asset('resources/images/album-art/3.jpg') }}">
                     <img class="songIcon" src="{{ asset('resources/images/album-art/4.jpg') }}">
                     <img class="songIcon" src="{{ asset('resources/images/album-art/12.jpg') }}">
                     <img class="songIcon" src="{{ asset('resources/images/album-art/19.jpg') }}">
-
+-->
                     <div class="playlist-info-box">
                         <div class="playlist-heartButton"></div>
                         <div class="playlist-likeCount">
@@ -110,52 +112,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="playlist">
-                    <img class="album-art" src="{{ asset('resources/images/album-art/18.jpg') }}">
-                    <h class="playlist-title">
-                        <a href="/playlist?id=1">Silent Nights</a>
-                    </h>
-
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/14.png') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/16.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/15.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/7.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/6.jpg') }}">
-
-                    <div class="playlist-info-box">
-                        <div class="playlist-heartButton"></div>
-                        <div class="playlist-likeCount">
-                            67
-                        </div>
-                        <div class="playlist-shareButton">
-                            Share
-                        </div>
-                    </div>
-                </div>
-
-                <div class="playlist">
-                    <img class="album-art" src="{{ asset('resources/images/album-art/1.png') }}">
-                    <h class="playlist-title">
-                        <a href="/playlist?id=1">Chilled Vibes</a>
-                    </h>
-
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/2.png') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/3.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/4.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/12.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/19.jpg') }}">
-
-                    <div class="playlist-info-box">
-                        <div class="playlist-heartButton"></div>
-                        <div class="playlist-likeCount">
-                            67
-                        </div>
-                        <div class="playlist-shareButton">
-                            Share
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
 
             </div>
         </div>

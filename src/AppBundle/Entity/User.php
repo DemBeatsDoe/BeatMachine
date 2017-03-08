@@ -31,7 +31,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @ORM\Column(name="email", type="string", length=191, unique=true)
      */
     private $email;
 
@@ -42,6 +42,29 @@ class User
      */
     private $passHash;
 
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="userPlaylists", type="json_array")
+     */
+    private $playlistIDs;
+
+    /**
+     * @return mixed
+     */
+    public function getPlaylistIDs()
+    {
+        return $this->playlistIDs;
+    }
+
+    /**
+     * @param mixed $playlistIDs
+     */
+    public function setPlaylistIDs($playlistIDs)
+    {
+        $this->playlistIDs = $playlistIDs;
+    }
 
     /**
      * Get id
@@ -124,5 +147,7 @@ class User
     {
         return $this->passHash;
     }
+
+
 }
 

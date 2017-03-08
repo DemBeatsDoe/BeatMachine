@@ -16,14 +16,47 @@ class PlaylistController extends Controller
         //Store the playlist id
         $playlistID = $request->query->get('id');
 
-        $playlistSongs = array("Song1", "Song2", "Song3");
+        $em = $this->getDoctrine()->getManager();
+
+        //Get playlist + user data from DB
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+        if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist: ".$playlistID));
+
+        $user = $em->getRepository('AppBundle:User')->find($playlist->getUserId());
+        if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist user: ".$playlist->getUserID()));
+
+        //This makes a test song array and pushes it to the DB
+        /*
+        $testList = array(
+            array(
+                2.31,
+                "Test name",
+                "Test artist"
+            ),
+            array(
+                2.31,
+                "Test name",
+                "Test artist"
+            ),
+                array(
+                    2.31,
+                    "Test name",
+                    "Test artist"
+                )
+        );
+
+        $playlist->setSongList($testList);
+        $em->merge($playlist);
+        $em->flush();
+        */
 
         return $this->render('users_playlist.html.twig', array(
+            'playlistArt' => $playlist->getArtLink(),
             'playlistID' => $playlistID,
-            'playlistName' => 'Test Playlist',
-            'playlistAuthor' => 'User1',
-            'authorID' => 100,
-            'playlistSongs' => $playlistSongs,
+            'playlistName' => $playlist->getName(),
+            'playlistAuthor' => $user->getUsername(),
+            'authorID' => $playlist->getUserID(),
+            'playlistSongs' => $playlist->getSongList(),
         ));
     }
 }

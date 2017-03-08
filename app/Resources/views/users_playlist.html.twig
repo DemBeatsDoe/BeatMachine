@@ -99,8 +99,8 @@
 {% block body %}
     <div class="playlistBlock">
         <div class="playlistHeader">
-            <img class="playlistArt" src="{{ asset('resources/images/album-art/1.png') }}">
-            <div class="playlistTitle">{{ playlistName }} {{ playlistID }}</div>
+            <img class="playlistArt" src="{{ playlistArt }}">
+            <div class="playlistTitle">{{ playlistName }}</div>
             <div class="playlistAuthor"><a href="/profile?id={{ authorID}}">Created by {{ playlistAuthor}}</a></div>
         </div>
 
@@ -118,13 +118,13 @@
                 {% for song in playlistSongs %}
                     <tr>
                         <td>
-                            2:31
+                            {{ song[0] }}
                         </td>
                         <td>
-                            {{song}}
+                            {{ song[1] }}
                         </td>
                         <td>
-                            Artist
+                            {{ song[2] }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -134,7 +134,7 @@
                         2:31
                     </td>
                     <td>
-                        Lol
+                        Currently playing song template
                     </td>
                     <td>
                         Artist
