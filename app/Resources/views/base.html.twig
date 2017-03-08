@@ -12,6 +12,109 @@
         {% block stylesheets %}
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+        <!--JQuery-->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+        <!--Soundcloud integration scripts-->
+        <script type="text/javascript" src="http://w.soundcloud.com/player/api.js"></script>
+
+        <script type="text/javascript">
+            //Script for controlling soundcloud widget API
+            var scWidget;
+            var barBGColour;
+            var barCanvas;
+            var ctx;
+            var currentTrackIndex = 0;
+            var playlist = [];
+            addSongToPlaylist("All Star Dance Remix", "168711691");
+            addSongToPlaylist("All Star For A Little Bit", "253185930");
+            addSongToPlaylist("All Star Forever", "239716261");
+
+            //Function to add a song to the playlist
+            function addSongToPlaylist(songName, trackID) {
+                playlist.push({name: songName, url:"http://api.soundcloud.com/tracks/"+trackID});
+            }
+
+            //Function to play the current song
+            function playSong() {
+                scWidget.play();
+            }
+
+            //Function to pause the current song
+            function pauseSong() {
+                scWidget.pause();
+            }
+
+            //Function to play next song
+            function playNextSong() {
+                currentTrackIndex = (currentTrackIndex+1)%playlist.length;
+                playSongAt(currentTrackIndex);
+            }
+
+            //Function to play the previous song
+            function playPrevSong() {
+                currentTrackIndex = (((currentTrackIndex-1)%playlist.length)+playlist.length)%playlist.length;
+                playSongAt(currentTrackIndex);
+            }
+
+            //Function to play a specific song in the playlist
+            function playSongAt(index, autoplay=true) {
+                redrawBar(0);
+                $("#songTitleLabel").text(playlist[index].name);
+                scWidget.load(playlist[index].url, {auto_play: autoplay});
+            }
+
+            //Function to redraw the progress bar at a particular location
+            function redrawBar(percentageComplete) {
+                //Clear the canvas
+                ctx.clearRect(0, 0, barCanvas.width, barCanvas.height);
+
+                //Draw base line
+                ctx.globalAlpha = 0.4;
+                ctx.strokeStyle = "#fefefe";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, barCanvas.height/2);
+                ctx.lineTo(barCanvas.width, barCanvas.height/2);
+                ctx.closePath();
+                ctx.stroke();
+
+                //Draw progress line
+                ctx.globalAlpha = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, barCanvas.height/2);
+                ctx.lineTo(barCanvas.width*percentageComplete, barCanvas.height/2);
+                ctx.closePath();
+                ctx.stroke();
+
+
+                //ctx.fillRect(0,0, 10,10);
+            }
+
+            //Bind widget and set event listeners
+            $(function() {
+                //Set canvas
+                barCanvas = document.getElementById("progressBar");
+                ctx = barCanvas.getContext("2d");
+
+                //Set widget
+                scWidget = SC.Widget("so");
+
+                playSongAt(0, false);
+
+                //Listen for song finish
+                scWidget.bind(SC.Widget.Events.FINISH, function() {
+                    playNextSong();
+                });
+
+                //Listen for progress of current song
+                scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, function (soundInfo ) {
+                    redrawBar((soundInfo.relativePosition));
+                })
+            });
+        </script>
+
     </head>
     <body>
         {% block header %}
@@ -21,10 +124,20 @@
         {% endblock %}
         {% block body %}Empty body{% endblock %}
         {% block playbar %}
-            <div class="playbar">
+            <div class="playbar"><!-- style="height: 300px;"> -->
+
+                <div id="songTitleLabel" style="padding-top: 10px; padding-bottom: 5px;">Now Playing: </div>
+
+                <canvas id="progressBar" width="400" height="10"></canvas>
+
                 <div class="buttons">
-                    Playbar Controls Go Here
+                    <button onclick="playPrevSong();">Prev</button>
+                    <button onclick="playSong();">Play</button>
+                    <button onclick="pauseSong();">Pause</button>
+                    <button onclick="playNextSong();">Next</button>
                 </div>
+
+                <iframe id="so" width="0%" height="0" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url="></iframe>
             </div>
         {% endblock %}
         {% block javascripts %}{% endblock %}
