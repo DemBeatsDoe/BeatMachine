@@ -35,7 +35,6 @@ class PlaylistList
      */
     private $playlistScore;
 
-
     /**
      * Get id
      *
