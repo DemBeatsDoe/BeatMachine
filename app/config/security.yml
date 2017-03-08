@@ -14,7 +14,10 @@ security:
             security: false
 
         main:
-            anonymous: ~
+          anonymous: ~
+          form_login:
+              login_path: login
+              check_path: login
             # activate different ways to authenticate
 
             # http_basic: ~
