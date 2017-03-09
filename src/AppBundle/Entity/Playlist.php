@@ -36,32 +36,6 @@ class Playlist
     private $votes;
 
     /**
-     * @return int
-     */
-    public function getVotes()
-    {
-        return $this->votes;
-    }
-
-    /**
-     * @param int $votes
-     */
-    public function setVotes($votes)
-    {
-        $this->votes = $votes;
-    }
-
-    public function voteUp()
-    {
-        $this->votes++;
-    }
-
-    public function voteDown()
-    {
-        $this->votes--;
-    }
-
-    /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=64)
@@ -74,22 +48,6 @@ class Playlist
      * @ORM\Column(name="artLink", type="string", length=191)
      */
     private $artLink;
-
-    /**
-     * @return mixed
-     */
-    public function getIsPublic()
-    {
-        return $this->isPublic;
-    }
-
-    /**
-     * @param mixed $isPublic
-     */
-    public function setIsPublic($isPublic)
-    {
-        $this->isPublic = $isPublic;
-    }
 
     /**
      * @var int
@@ -203,6 +161,46 @@ class Playlist
         $this->songList = $songList;
     }
 
+    /**
+     * @return int
+     */
+    public function getVotes()
+    {
+        return $this->votes;
+    }
 
+    /**
+     * @param int $votes
+     */
+    public function setVotes($votes)
+    {
+        $this->votes = $votes;
+    }
+
+    public function voteUp()
+    {
+        $this->votes++;
+    }
+
+    public function voteDown()
+    {
+        $this->votes--;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsPublic()
+    {
+        return $this->isPublic;
+    }
+
+    /**
+     * @param mixed $isPublic
+     */
+    public function setIsPublic($isPublic)
+    {
+        $this->isPublic = $isPublic;
+    }
 }
 

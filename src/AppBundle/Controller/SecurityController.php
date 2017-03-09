@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SecurityController extends Controller
 {
     /**
-     * @Route("/login", name="login")
+     * @Route("/oldlogin", name="login")
      */
     public function loginAction(Request $request)
     {

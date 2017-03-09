@@ -24,6 +24,7 @@ class FeedController extends Controller
         //Get public playlists in order of votes
         $this->playlists = $em->getRepository('AppBundle:Playlist')->findAll(); //, array('votes' => 'DEC')
 
+        /*
         //Get first n
         $i = 0;
         $n = sizeof($this->playlists);
@@ -36,7 +37,18 @@ class FeedController extends Controller
             array_push($votes, $this->playlists[$i]->getVotes());
             $i++;
         }
-
+        */
+/*
+        //Get array of song links for each playlist
+        $songs = array();
+        foreach($this->playlists as $playlist) {
+            $linkarr = array();
+            foreach($playlist->getSongList() as $song) {
+                array_push($linkarr, $em->getRepository('AppBundle:Song')->find($song)->getArtLink());
+            }
+            array_push($songs, $linkarr);
+        }
+*/
         return $this->render('playlist.html.twig', array('playlists' => $this->playlists));
     }
 

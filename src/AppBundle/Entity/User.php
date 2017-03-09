@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User
+class User extends \FOS\UserBundle\Model\User
 {
     /**
      * @var int
@@ -19,34 +20,13 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="username", type="string", length=64, unique=true)
-     */
-    private $username;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=191, unique=true)
-     */
-    private $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="passHash", type="string", length=100)
-     */
-    private $passHash;
+    protected $id;
 
 
     /**
      * @var array
      *
-     * @ORM\Column(name="userPlaylists", type="json_array")
+     * @ORM\Column(name="userPlaylists", type="json_array", nullable=true)
      */
     private $playlistIDs;
 
@@ -75,79 +55,5 @@ class User
     {
         return $this->id;
     }
-
-    /**
-     * Set username
-     *
-     * @param string $username
-     *
-     * @return User
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set passHash
-     *
-     * @param string $passHash
-     *
-     * @return User
-     */
-    public function setPassHash($passHash)
-    {
-        $this->passHash = $passHash;
-
-        return $this;
-    }
-
-    /**
-     * Get passHash
-     *
-     * @return string
-     */
-    public function getPassHash()
-    {
-        return $this->passHash;
-    }
-
-
 }
 

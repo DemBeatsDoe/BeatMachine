@@ -17,3 +17,11 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    fos_user:
+        db_driver: orm # other valid values are 'mongodb' and 'couchdb'
+        firewall_name: main
+        user_class: AppBundle\Entity\User
+        from_email:
+            address: "%mailer_user%"
+            sender_name: "%mailer_user%"

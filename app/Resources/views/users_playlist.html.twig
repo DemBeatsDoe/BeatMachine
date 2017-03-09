@@ -115,18 +115,20 @@
             </thead>
 
             <tbody>
-                {% for song in playlistSongs %}
+                {% for song in songs %}
+                    <div>
                     <tr>
                         <td>
-                            {{ song[0] }}
+                            {{ song.length }}
                         </td>
                         <td>
-                            {{ song[1] }}
+                            {{ song.name }}
                         </td>
                         <td>
-                            {{ song[2] }}
+                            {{ song.artist }}
                         </td>
                     </tr>
+                    </div>
                 {% endfor %}
 
                 <tr id="playing">

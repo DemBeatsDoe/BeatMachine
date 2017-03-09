@@ -8,6 +8,8 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/cssreset.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playlist.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playbar.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/header.css') }}">
+
 
         {% block stylesheets %}
         {% endblock %}
@@ -30,6 +32,13 @@
             addSongToPlaylist("All Star Dance Remix", "168711691");
             addSongToPlaylist("All Star For A Little Bit", "253185930");
             addSongToPlaylist("All Star Forever", "239716261");
+
+            //Function to replace the currently playing song in the playlist and start playing it
+            function playNewSong(url, name) {
+                playlist[currentTrackIndex].name = name;
+                playlist[currentTrackIndex].url = url;
+                playSongAt(currentTrackIndex);
+            }
 
             //Function to add a song to the playlist
             function addSongToPlaylist(songName, trackID) {
@@ -120,11 +129,20 @@
         {% block header %}
             <div class="header">
                 <a href="/">BEAT MACHINE</a>
+                <div class="loginbuttons">
+                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    <a href="http://localhost:8000/profile?id={{ app.user.id }}">{{ app.user.username }}</a>
+                    <a href="/logout"><button>Logout</button></a>
+                {% else %}
+                    <a href="/login"><button>Log in</button></a>
+                    <a href="/register"><button>Register</button></a>
+                {% endif %}
+                </div>
             </div>
         {% endblock %}
         {% block body %}Empty body{% endblock %}
         {% block playbar %}
-            <div class="playbar"><!-- style="height: 300px;"> -->
+            <div class="playbar">
 
                 <div id="songTitleLabel" style="padding-top: 10px; padding-bottom: 5px;">Now Playing: </div>
 
@@ -137,7 +155,7 @@
                     <button onclick="playNextSong();">Next</button>
                 </div>
 
-                <iframe id="so" width="0%" height="0" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url="></iframe>
+                <iframe style="display:none;" id="so" width="0%" height="0" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url="></iframe>
             </div>
         {% endblock %}
         {% block javascripts %}{% endblock %}
