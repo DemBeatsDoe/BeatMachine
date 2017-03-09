@@ -1,5 +1,28 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html,body {
+    height:100%;
+    display: flex;
+    flex-direction: column;
+}
+
 body{
     background: linear-gradient(to bottom, #eeeeee , #9ea1a9);
+}
+
+#content {
+    background-color: #fefefe;
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 150px;
+}
+
+#innercontent {
+    margin: 50px;
 }
 
 .feed{

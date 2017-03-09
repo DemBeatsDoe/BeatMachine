@@ -1,12 +1,12 @@
-.header button {
+.header .loginbuttons button {
     background-color: #4caf50; /* Green */
     border: none;
     color: white;
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     font-size: 16px;
+    display: inline-block;
 }
 
 .header{
@@ -24,20 +24,30 @@
     text-align: center;
     color: #fefefe;
 
-    display: inline;
 }
-.header a{
+.header a {
     font-family: 'Lato', sans-serif;
     font-size: 28pt;
     font-weight: 900;
     text-align: center;
     line-height: 70px;
     color: #fefefe;
-
+    display: block;
+    margin: auto;
     outline:none;
     text-decoration:none;
 }
 
 .header .loginbuttons {
-    float: right;
+    position:absolute; top:0; right:0;
+    display: inline-block;
+
+}
+
+.header .title {
+    display:block; margin:auto;
+}
+
+.header .loginbuttons ul {
+    display: inline-block;
 }

@@ -49,7 +49,7 @@ class FeedController extends Controller
             array_push($songs, $linkarr);
         }
 */
-        return $this->render('playlist.html.twig', array('playlists' => $this->playlists));
+        return $this->render('feed.html.twig', array('playlists' => $this->playlists));
     }
 
     /**

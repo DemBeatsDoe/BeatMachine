@@ -6,13 +6,15 @@
 
         <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/cssreset.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playlist.css') }}">
+
+        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/base.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playbar.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/header.css') }}">
 
 
         {% block stylesheets %}
         {% endblock %}
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
         <!--JQuery-->
@@ -125,22 +127,30 @@
         </script>
 
     </head>
+
     <body>
+
         {% block header %}
             <div class="header">
-                <a href="/">BEAT MACHINE</a>
-                <div class="loginbuttons">
-                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <a href="http://localhost:8000/profile?id={{ app.user.id }}">{{ app.user.username }}</a>
-                    <a href="/logout"><button>Logout</button></a>
-                {% else %}
-                    <a href="/login"><button>Log in</button></a>
-                    <a href="/register"><button>Register</button></a>
-                {% endif %}
-                </div>
+                <span class="title"><a href="/">BEAT MACHINE</a></span>
+
+
+                <span class="loginbuttons">
+                    <ul>
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                            <li><a href="http://localhost:8000/profile?id={{ app.user.id }}">{{ app.user.username }}</a></li>
+                            <li><a href="/logout"><button>Logout</button></a></li>
+                        {% else %}
+                            <li><a href="/login"><button>Log in</button></a></li>
+                            <li><a href="/register"><button>Register</button></a></li>
+                        {% endif %}
+                    </ul>
+                </span>
             </div>
         {% endblock %}
+
         {% block body %}Empty body{% endblock %}
+
         {% block playbar %}
             <div class="playbar">
 
@@ -158,6 +168,8 @@
                 <iframe style="display:none;" id="so" width="0%" height="0" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url="></iframe>
             </div>
         {% endblock %}
+
         {% block javascripts %}{% endblock %}
     </body>
+
 </html>
