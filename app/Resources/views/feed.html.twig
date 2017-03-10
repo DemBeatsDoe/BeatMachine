@@ -9,6 +9,15 @@
     <div class="feed">
         {% for playlist in playlists %}
         <div class="playlist">
+            <div class="voteButtons">
+                <img src="{{ asset('resources/images/up.png') }}" onclick="vote('{{ playlist.id }}', 'up');">
+                <br>
+                {{ playlist.getVotes }}
+                <br>
+                <img src="{{ asset('resources/images/down.png') }}" onclick="vote('{{ playlist.id }}', 'down');">
+            </div>
+
+
             <img class="album-art" src="{{ playlist.getArtLink }}">
             <h class="playlist-title">
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
@@ -22,9 +31,6 @@
 
             <div class="playlist-info-box">
                 <div class="playlist-heartButton"></div>
-                <div class="playlist-likeCount">
-                    {{ playlist.getVotes }}
-                </div>
                 <div class="playlist-shareButton">
                     Share
                 </div>
@@ -44,6 +50,23 @@
             requestNextPlaylist();
             document.body.onclick = checkIfHeartClicked;
         };
+
+        var waitingForVoteData = false;
+        function vote(playlistid, direction) {
+            xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/playlist/vote", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send('playlistID=' + playlistid + '&direction=' + direction);
+
+            waitingForVoteData = true;
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    var response = JSON.parse(xhttp.responseText);
+                    window.alert(response);
+                    waitingForData = false;
+                }
+            }
+        }
 
         var waitingForData = false;
         function requestNextPlaylist() {

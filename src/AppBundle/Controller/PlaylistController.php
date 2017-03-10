@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Song;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class PlaylistController extends Controller
@@ -49,5 +50,52 @@ class PlaylistController extends Controller
      */
     public function createAction() {
         return $this->render('create_playlist.html.twig');
+    }
+
+
+    /**
+     * @Route("/playlist/vote")
+     */
+    public function processAJAX(Request $request)
+    {
+        $playlistID = $request->request->get('playlistID');
+        $voteDirection = $request->request->get('direction');
+
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $ups = $user->getUpvotes();
+        $downs = $user->getDownvotes();
+        $votecount = 0;
+        if ($voteDirection == 'up') {
+            if (!in_array($playlistID, $ups)) { //Check the user hasn't already voted in this direction
+                if (in_array($playlistID, $downs)) {
+                    unset($downs[array_search($playlistID, $downs)]);
+                    $votecount++;
+                }
+                array_push($ups, $playlistID);
+                $votecount++;
+            }
+        } else if ($voteDirection == 'down') {
+            if (!in_array($playlistID, $downs)) {
+                if (in_array($playlistID, $ups)) {
+                    unset($ups[array_search($playlistID, $ups)]);
+                    $votecount--;
+                }
+                array_push($downs, $playlistID);
+                $votecount--;
+            }
+        }
+
+        $user->setUpvotes($ups);
+        $user->setDownvotes($downs);
+        $playlist->addVotes($votecount);
+        $em->merge($playlist);
+        $em->merge($user);
+        $em->flush();
+
+
+        return new Response(json_encode($playlist->getVotes()));
     }
 }

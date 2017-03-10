@@ -200,14 +200,9 @@ class Playlist
         $this->votes = $votes;
     }
 
-    public function voteUp()
+    public function addVotes($n)
     {
-        $this->votes++;
-    }
-
-    public function voteDown()
-    {
-        $this->votes--;
+        $this->votes+=$n;
     }
 
     /**

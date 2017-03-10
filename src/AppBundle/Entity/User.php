@@ -22,13 +22,58 @@ class User extends \FOS\UserBundle\Model\User
      */
     protected $id;
 
-
     /**
      * @var array
      *
      * @ORM\Column(name="userPlaylists", type="json_array", nullable=true)
      */
     private $playlistIDs;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="upvotes", type="json_array", nullable=true)
+     */
+    private $upvotes;
+
+    /**
+     * @return array
+     */
+    public function getDownvotes()
+    {
+        return $this->downvotes;
+    }
+
+    /**
+     * @param array $downvotes
+     */
+    public function setDownvotes($downvotes)
+    {
+        $this->downvotes = $downvotes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUpvotes()
+    {
+        return $this->upvotes;
+    }
+
+    /**
+     * @param array $upvotes
+     */
+    public function setUpvotes($upvotes)
+    {
+        $this->upvotes = $upvotes;
+    }
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="downvotes", type="json_array", nullable=true)
+     */
+    private $downvotes;
 
     /**
      * @var string

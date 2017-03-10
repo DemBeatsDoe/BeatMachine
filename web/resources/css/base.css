@@ -51,8 +51,8 @@ body{
 }
 h.playlist-title{
     float: left;
-    position: absolute;
-    left: 155px;
+    position: relative;
+    left: 40px;
     top: 8%;
     margin: 0;
     padding: 0;
@@ -73,6 +73,7 @@ h.playlist-title a{
 }
 .songIcon{
     position: relative;
+    left: 0;
     margin-left: -10px;
     top: 43px;
     width: 65px;
@@ -88,6 +89,26 @@ h.playlist-title a{
     float: right;
     margin-right: 4%;
     margin-top: 10px;
+}
+
+.playlist .voteButtons {
+    float:left;
+    display: block;
+    padding-left: 19px;
+    font-size: 20px;
+}
+.playlist .voteButtons img{
+    position: relative;
+    width: 30px;
+    height: 30px;
+    padding-top: 10px;
+    left: -7px;
+    top: -7px;
+    opacity: 1;
+}
+
+.playlist .voteButtons img:hover {
+    opacity: 0.7;
 }
 
 @keyframes buzz{
