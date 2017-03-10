@@ -36,15 +36,14 @@
             addSongToPlaylist("All Star Forever", "239716261");
 
             //Function to replace the currently playing song in the playlist and start playing it
-            function playNewSong(url, name) {
-                playlist[currentTrackIndex].name = name;
-                playlist[currentTrackIndex].url = url;
-                playSongAt(currentTrackIndex);
+            function playNewSong(id, name) {
+                playSongAt(addSongToPlaylist(name, id));
             }
 
             //Function to add a song to the playlist
             function addSongToPlaylist(songName, trackID) {
                 playlist.push({name: songName, url:"http://api.soundcloud.com/tracks/"+trackID});
+                return playlist.length-1;
             }
 
             //Function to play the current song
@@ -55,6 +54,11 @@
             //Function to pause the current song
             function pauseSong() {
                 scWidget.pause();
+            }
+
+            //Empties the playlist
+            function emptyPlaylist() {
+                playlist.empty();
             }
 
             //Function to play next song
@@ -74,6 +78,7 @@
                 redrawBar(0);
                 $("#songTitleLabel").text(playlist[index].name);
                 scWidget.load(playlist[index].url, {auto_play: autoplay});
+                currentTrackIndex = index;
             }
 
             //Function to redraw the progress bar at a particular location
