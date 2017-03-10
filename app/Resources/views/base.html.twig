@@ -135,6 +135,7 @@
             <div class="header">
 
                 <span class="location">
+                    <img class="icon" src="{{ asset('resources/images/location.png') }}"
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                         {{ app.user.location }}
                     {% else %}
@@ -176,7 +177,7 @@
                     <canvas id="progressBar" width="400" height="10"></canvas>
                 </div>
 
-                <iframe style="display:none;" id="so" width="0%" height="0" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url="></iframe>
+                <iframe style="display:none;" id="so" src="http://w.soundcloud.com/player/?url="></iframe>
             </div>
         {% endblock %}
 
