@@ -42,4 +42,12 @@ class PlaylistController extends Controller
             'songs' => $songs
         ));
     }
+
+
+    /**
+     * @Route("/playlist/create")
+     */
+    public function createAction() {
+        return $this->render('create_playlist.html.twig');
+    }
 }
