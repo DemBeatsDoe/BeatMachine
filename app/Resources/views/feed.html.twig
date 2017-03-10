@@ -14,7 +14,7 @@
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
             </h>
 
-            {% set a = loop.index0 %}
+            {% set a = loop.index0%}
 
             {% for url in songLinks[a] %}
                 <img class="songIcon" src="{{ url }}">
@@ -102,6 +102,6 @@
             if (e.className && e.className.indexOf("playlist-heartButton") != -1) {
                 e.className = "playlist-heartButton-clicked";
             }
-        }
+        };
     </script>
 {% endblock %}

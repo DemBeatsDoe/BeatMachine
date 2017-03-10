@@ -101,10 +101,10 @@
                         <a href="/playlist?id={{ playlist.id }}">{{ playlist.name }}</a>
                     </h>
 
-                    {% set a = loop.index0 %}
+                    {% set a = loop.index0%}
                     {% for url in songLinks[a] %}
                         <img class="songIcon" src="{{ url }}">
-                    {% endfor %}
+                    {%  endfor %}
 
                     <div class="playlist-info-box">
                         <div class="playlist-heartButton"></div>
