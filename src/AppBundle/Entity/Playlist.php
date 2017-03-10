@@ -52,7 +52,7 @@ class Playlist
     /**
      * @var int
      *
-     * @ORM\Column(name="userID", type="integer", unique=true)
+     * @ORM\Column(name="userID", type="integer", unique=false)
      */
     private $userID;
 

@@ -64,12 +64,26 @@
             cursor: pointer;
             cursor: hand;
         }
-        .songsTable #playing{
+        .songsTable .playing{
             font-weight: bold;
             color: #2f364a;
         }
 
     </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var lastClicked = false;
+
+        function setActiveSong(clickedElement) {
+            if(lastClicked!=false){
+                lastClicked.removeClass();
+            }
+            clickedElement.removeClass().addClass('playing');
+            lastClicked = clickedElement;
+        }
+    </script>
 {% endblock %}
 
 {% block pagebody %}
@@ -96,7 +110,7 @@
                 {% for song in songs %}
                     {% set a = loop.index0%}
                     <div>
-                    <tr>
+                    <tr id="{{ song.musicLink }}">
                         <td>
                             {{ song.length }}
                         </td>
@@ -105,9 +119,10 @@
                                 {% for i in songs %}
                                     {% set b = loop.index0%}
                                     {% if b > a %}
-                                        addSongToPlaylist('{{ songs[b].name }}', '{{ songs[b].musicLink }}')
+                                        addSongToPlaylist('{{ songs[b].name }}', '{{ songs[b].musicLink }}');
                                     {% endif %}
                                 {% endfor %}
+                                setActiveSong($('#{{ song.musicLink }}'));
                                 ">
                             {{ song.name }}
                         </td>
@@ -117,18 +132,6 @@
                     </tr>
                     </div>
                 {% endfor %}
-
-                <tr id="playing">
-                    <td>
-                        2:31
-                    </td>
-                    <td>
-                        Currently playing song template
-                    </td>
-                    <td>
-                        Artist
-                    </td>
-                </tr>
 
             </tbody>
 
