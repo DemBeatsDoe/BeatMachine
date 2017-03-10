@@ -6,6 +6,7 @@ use AppBundle\Entity\Song;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class PlaylistController extends Controller
@@ -95,7 +96,6 @@ class PlaylistController extends Controller
         $em->merge($user);
         $em->flush();
 
-
-        return new Response(json_encode($playlist->getVotes()));
+        return new JsonResponse(array('votes' => $playlist->getVotes()));
     }
 }

@@ -8,13 +8,23 @@
 {% block body %}
     <div class="feed">
         {% for playlist in playlists %}
+            {% set a = loop.index0%}
+
         <div class="playlist">
             <div class="voteButtons">
-                <img src="{{ asset('resources/images/up.png') }}" onclick="vote('{{ playlist.id }}', 'up');">
+                {% set prev = a-1 %}
+                {% set next = a+1 %}
+                {% if prev < 0 %}
+                    {% set prev = 0 %}
+                {% endif %}
+                {% if next > playlists|length-1 %}
+                    {% set next = playlists|length-1 %}
+                {% endif %}
+                <img src="{{ asset('resources/images/up.png') }}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');">
                 <br>
-                {{ playlist.getVotes }}
+                <span id="v{{ playlist.id }}">{{ playlist.getVotes }}</span>
                 <br>
-                <img src="{{ asset('resources/images/down.png') }}" onclick="vote('{{ playlist.id }}', 'down');">
+                <img src="{{ asset('resources/images/down.png') }}" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');">
             </div>
 
 
@@ -22,8 +32,6 @@
             <h class="playlist-title">
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
             </h>
-
-            {% set a = loop.index0%}
 
             {% for url in songLinks[a] %}
                 <img class="songIcon" src="{{ url }}">
@@ -51,21 +59,41 @@
             document.body.onclick = checkIfHeartClicked;
         };
 
-        var waitingForVoteData = false;
-        function vote(playlistid, direction) {
-            xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "/playlist/vote", true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send('playlistID=' + playlistid + '&direction=' + direction);
+        function vote(playlistid, direction, textid, aboveid, belowid) {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/vote", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + playlistid + '&direction=' + direction);
 
-            waitingForVoteData = true;
-            xhttp.onreadystatechange = function () {
-                if (xhttp.readyState == 4 && xhttp.status == 200) {
-                    var response = JSON.parse(xhttp.responseText);
-                    window.alert(response);
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    document.getElementById(textid).innerHTML = response.votes;
+                    //Check if it has overtaken the top one
+                    if (document.getElementById(textid).innerHTML > document.getElementById(aboveid).innerHTML) {
+                        swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
+                    }
+                    if (document.getElementById(textid).innerHTML < document.getElementById(belowid).innerHTML) {
+                        //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);
+                    }
                     waitingForData = false;
                 }
             }
+        }
+
+        function swapElements(obj1, obj2) {
+            // create marker element and insert it where obj1 is
+            var temp = document.createElement("div");
+            obj1.parentNode.insertBefore(temp, obj1);
+
+            // move obj1 to right before obj2
+            obj2.parentNode.insertBefore(obj1, obj2);
+
+            // move obj2 to right before where obj1 used to be
+            temp.parentNode.insertBefore(obj2, temp);
+
+            // remove temporary marker node
+            temp.parentNode.removeChild(temp);
         }
 
         var waitingForData = false;
