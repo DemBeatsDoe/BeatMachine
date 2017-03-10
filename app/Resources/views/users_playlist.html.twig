@@ -75,6 +75,9 @@
             <img class="playlistArt" src="{{ playlistArt }}">
             <div class="playlistTitle">{{ playlistName }}</div>
             <div class="playlistAuthor"><a href="/profile?id={{ authorID}}">Created by {{ playlistAuthor}}</a></div>
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
+                <div class="editbutton"><a href="/playlist/manage?id={{ playlistID }}">Edit this playlist</a></div>
+            {% endif %}
         </div>
 
         <table class="songsTable">

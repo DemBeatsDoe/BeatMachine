@@ -14,8 +14,10 @@
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
             </h>
 
-            {% for url in playlist.songList %}
-                <img class="songIcon" src="{{ playlist.getArtLink }}">
+            {% set a = loop.index0 %}
+
+            {% for url in songLinks[a] %}
+                <img class="songIcon" src="{{ url }}">
             {%  endfor %}
 
             <div class="playlist-info-box">
@@ -100,6 +102,6 @@
             if (e.className && e.className.indexOf("playlist-heartButton") != -1) {
                 e.className = "playlist-heartButton-clicked";
             }
-        };
+        }
     </script>
 {% endblock %}

@@ -2,9 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class FeedController extends Controller
 {
@@ -22,7 +20,7 @@ class FeedController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         //Get public playlists in order of votes
-        $this->playlists = $em->getRepository('AppBundle:Playlist')->findAll(); //, array('votes' => 'DEC')
+        $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1'), array('votes' => 'DESC'), 10);
 
         /*
         //Get first n
@@ -38,18 +36,18 @@ class FeedController extends Controller
             $i++;
         }
         */
-/*
-        //Get array of song links for each playlist
-        $songs = array();
+
+        //Get array of song art links for each playlist
+        $songLinks = array();
         foreach($this->playlists as $playlist) {
             $linkarr = array();
             foreach($playlist->getSongList() as $song) {
                 array_push($linkarr, $em->getRepository('AppBundle:Song')->find($song)->getArtLink());
             }
-            array_push($songs, $linkarr);
+            array_push($songLinks, $linkarr);
         }
-*/
-        return $this->render('feed.html.twig', array('playlists' => $this->playlists));
+
+        return $this->render('feed.html.twig', array('playlists' => $this->playlists, 'songLinks' => $songLinks));
     }
 
     /**

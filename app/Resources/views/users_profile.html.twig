@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Beat Machine - {{ userName }}{% endblock %}
+{% block title %}Beat Machine - {{ user.username }}{% endblock %}
 
 {% block stylesheets %}
     <style>
@@ -74,13 +74,19 @@
 {% endblock %}
 
 {% block body %}
+
+    {% set count = 0 %}
+    {% for playlist in playlists %}
+        {% set count = count + playlist.votes %}
+    {% endfor %}
+
     <div class="profileOuterBlock">
         <div class="profileInnerBlock">
             <div class="profileHeader">
                 <img class="profilePicture" src="{{ asset('resources/images/default-avatar.png') }}">
-                <div class="profileName">{{ userName }}</div>
-                <div class="profileInfo"><span class="counter">12</span>Playlists Created</div>
-                <div class="profileInfo"><span class="counter">30</span>Likes on their Playlists</div>
+                <div class="profileName">{{ user.username }}</div>
+                <div class="profileInfo"><span class="counter">{{ playlists|length }}</span>Playlists Created</div>
+                <div class="profileInfo"><span class="counter">{{ count }}</span>Votes on their Playlists</div>
                 <div class="profileInfo"><span class="counter">18</span>Shares on their Playlists</div>
             </div>
 
@@ -90,22 +96,20 @@
 
                 {% for playlist in playlists %}
                 <div class="playlist">
-                    <img class="album-art" src="{{ playlist[2] }}">
+                    <img class="album-art" src="{{ playlist.artLink }}">
                     <h class="playlist-title">
-                        <a href="/playlist?id={{ playlist[0] }}">{{ playlist[1] }}</a>
+                        <a href="/playlist?id={{ playlist.id }}">{{ playlist.name }}</a>
                     </h>
 
-<!--
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/2.png') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/3.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/4.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/12.jpg') }}">
-                    <img class="songIcon" src="{{ asset('resources/images/album-art/19.jpg') }}">
--->
+                    {% set a = loop.index0 %}
+                    {% for url in songLinks[a] %}
+                        <img class="songIcon" src="{{ url }}">
+                    {% endfor %}
+
                     <div class="playlist-info-box">
                         <div class="playlist-heartButton"></div>
                         <div class="playlist-likeCount">
-                            67
+                            {{ playlist.votes }}
                         </div>
                         <div class="playlist-shareButton">
                             Share

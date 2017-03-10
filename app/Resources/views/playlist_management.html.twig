@@ -3,11 +3,9 @@
 {% block title %}BeatMachine - Playlist Management{% endblock %}
 
 {% block pagebody %}
-    <h1>hfghgf</h1>
-    <h1>hfghgf</h1>
-    <h1>hfghgf</h1>
-    <h1>hfghgf</h1>
-    <h1>hfghgf</h1>
-    <h1>hfghgf</h1>
-    <h1>hfghgf</h1>
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == playlistID %}
+        <h1>Playlist management</h1>
+    {% else %}
+        <h1>You do not have permission to edit this playlist</h1>
+    {% endif %}
 {% endblock %}

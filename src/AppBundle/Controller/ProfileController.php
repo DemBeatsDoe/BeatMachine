@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -23,31 +22,23 @@ class ProfileController extends Controller
         $user = $em->getRepository('AppBundle:User')->find($userID);
         if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find user: ".$userID));
 
-        //Get user playlists as an array
-        $userPlaylistArray = array();
-        $playlistIDs = $user->getPlaylistIDs();
-        foreach ($playlistIDs as $pid) {
-            //Get playlist from DB
-            $p = $em->getRepository('AppBundle:Playlist')->find($pid);
-            if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find user playlist: ".$pid));
-            array_push($userPlaylistArray, array($p->getId(), $p->getName(), $p->getArtLink()));
+        //Get user's playlists
+        $userPlaylists = $em->getRepository('AppBundle:Playlist')->findBy(array('userID' => $userID), array('id' => 'ASC'));
+
+        //Get array of song art links for each playlist
+        $songLinks = array();
+        foreach ($userPlaylists as $playlist) {
+            $linkarr = array();
+            foreach ($playlist->getSongList() as $song) {
+                array_push($linkarr, $em->getRepository('AppBundle:Song')->find($song)->getArtLink());
+            }
+            array_push($songLinks, $linkarr);
         }
 
-
-        //This makes a test user playlist array and pushes it to the DB
-        /*
-        $testList = array(
-            1
-        );
-
-        $user->setPlaylistIDs($testList);
-        $em->merge($user);
-        $em->flush();
-        */
-
         return $this->render('users_profile.html.twig', array(
-            'userName' =>  $user->getUsername(),
-            'playlists' => $userPlaylistArray
+            'user' => $user,
+            'playlists' => $userPlaylists,
+            'songLinks' => $songLinks
         ));
     }
 }
