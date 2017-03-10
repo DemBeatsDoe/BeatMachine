@@ -45,6 +45,29 @@ class Playlist
     /**
      * @var string
      *
+     * @ORM\Column(name="location", type="string", length=64)
+     */
+    private $location;
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string $location
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+    }
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="artLink", type="string", length=191)
      */
     private $artLink;
