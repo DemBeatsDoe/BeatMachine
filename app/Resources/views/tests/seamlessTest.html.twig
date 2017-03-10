@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script>
+            function changePage(newURL){
+                history.pushState(null, null, newURL);
+
+                var includeDiv = $("#pageContents");
+                includeDiv.load(newURL + " #pageContents");
+
+                console.log("Changed page!");
+            }
+        </script>
+
+        <script type="text/javascript" src="http://w.soundcloud.com/player/api.js"></script>
+
+        <script type="text/javascript">
+            var widget1;
+            var playlist = ["http://api.soundcloud.com/tracks/13692671", "http://api.soundcloud.com/tracks/239716261"];
+            currentTrackIndex = 0;
+            $(function() {
+                widget1 = SC.Widget("so");
+
+                widget1.bind(SC.Widget.Events.FINISH, function() {
+                    widget1.load(playlist[currentTrackIndex], {auto_play: true});
+                    currentTrackIndex ++;
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+
+        <div id="pageContents">
+        {% block pageContent %}
+            Home Page!
+        {% endblock %}
+        </div>
+
+        <button onclick="changePage('seamless1');">Change Page</button>
+
+        <iframe id="so" width="100%" height="160" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url=http://api.soundcloud.com/tracks/168711691"></iframe>
+        <button onclick="widget1.play();">Play</button>
+        <button onclick="widget1.pause();">Pause</button>
+
+    </body>
+
+</html>

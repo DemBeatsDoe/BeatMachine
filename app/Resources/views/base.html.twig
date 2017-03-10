@@ -26,7 +26,6 @@
         <script type="text/javascript">
             //Script for controlling soundcloud widget API
             var scWidget;
-            var barBGColour;
             var barCanvas;
             var ctx;
             var currentTrackIndex = 0;
@@ -158,16 +157,17 @@
 
         {% block playbar %}
             <div class="playbar">
-
-                <div id="songTitleLabel" style="padding-top: 10px; padding-bottom: 5px;">Now Playing: </div>
-
-                <canvas id="progressBar" width="400" height="10"></canvas>
-
-                <div class="buttons">
-                    <button onclick="playPrevSong();">Prev</button>
-                    <button onclick="playSong();">Play</button>
-                    <button onclick="pauseSong();">Pause</button>
-                    <button onclick="playNextSong();">Next</button>
+                <div class="controlSection" style="float: left;">
+                    <div class="buttons">
+                        <button onclick="playPrevSong();">Prev</button>
+                        <button onclick="playSong();">Play</button>
+                        <button onclick="pauseSong();">Pause</button>
+                        <button onclick="playNextSong();">Next</button>
+                    </div>
+                </div>
+                <div class="barSection">
+                    <div id="songTitleLabel" style="padding-top: 10px; padding-bottom: 5px;">Now Playing: </div>
+                    <canvas id="progressBar" width="400" height="10"></canvas>
                 </div>
 
                 <iframe style="display:none;" id="so" width="0%" height="0" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url="></iframe>
