@@ -92,13 +92,20 @@
 
             <tbody>
                 {% for song in songs %}
+                    {% set a = loop.index0%}
                     <div>
                     <tr>
                         <td>
                             {{ song.length }}
                         </td>
                         <td onclick="
-                                playNewSong('{{ song.musicLink }}', '{{ song.name }}');
+                                playNewSong('{{ song.name }}', '{{ song.musicLink }}');
+                                {% for i in songs %}
+                                    {% set b = loop.index0%}
+                                    {% if b > a %}
+                                        addSongToPlaylist('{{ songs[b].name }}', '{{ songs[b].musicLink }}')
+                                    {% endif %}
+                                {% endfor %}
                                 ">
                             {{ song.name }}
                         </td>
