@@ -131,19 +131,27 @@
                 })
             });
         </script>
-
     </head>
 
     <body>
 
         {% block header %}
             <div class="header">
-                <span class="title"><a href="/">BEAT MACHINE</a></span>
 
+                <span class="location">
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        {{ app.user.location }}
+                    {% else %}
+                        Bath, UK
+                    {% endif %}
+                </span>
+
+                <span class="title"><a href="/">BEAT MACHINE</a></span>
 
                 <span class="loginbuttons">
                     <ul>
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                            <li><a href="/playlist/create">+</a></li>
                             <li><a href="/profile?id={{ app.user.id }}">{{ app.user.username }}</a></li>
                             <li><a href="/logout"><button>Logout</button></a></li>
                         {% else %}

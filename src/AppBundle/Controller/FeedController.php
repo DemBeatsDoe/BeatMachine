@@ -21,23 +21,12 @@ class FeedController extends Controller
         //Get DB entity manager
         $em = $this->getDoctrine()->getManager();
 
-        //Get public playlists in order of votes
-        $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1'), array('votes' => 'DESC'), 10);
+        $loc = "Bath, UK";
+        $user = $this->getUser();
+        if ($user != null) $loc = $user->getLocation();
 
-        /*
-        //Get first n
-        $i = 0;
-        $n = sizeof($this->playlists);
-        $art = array();
-        $name = array();
-        $votes = array();
-        while ($i < $n) {
-            array_push($art, $this->playlists[$i]->getArtLink());
-            array_push($name, $this->playlists[$i]->getName());
-            array_push($votes, $this->playlists[$i]->getVotes());
-            $i++;
-        }
-        */
+        //Get public playlists in order of votes
+        $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
 
         //Get array of song art links for each playlist
         $songLinks = array();

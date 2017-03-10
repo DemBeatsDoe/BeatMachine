@@ -31,6 +31,29 @@ class User extends \FOS\UserBundle\Model\User
     private $playlistIDs;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="location", type="string", length=64)
+     */
+    private $location;
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string $location
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+    }
+
+    /**
      * @return mixed
      */
     public function getPlaylistIDs()
