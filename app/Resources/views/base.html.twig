@@ -1,28 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Empty Title{% endblock %}</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <title>{% block title %}BeatMachine{% endblock %}</title>
+
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+        <!-- Bootstrap -->
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <!-- /Bootstrap -->
+
+        <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/cssreset.css') }}">
 
+        <!-- Our CSS -->
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/base.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/playbar.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('resources/css/header.css') }}">
 
-
         {% block stylesheets %}
         {% endblock %}
-
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-
-        <!--JQuery-->
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
         <!--Soundcloud integration scripts-->
         <script type="text/javascript" src="http://w.soundcloud.com/player/api.js"></script>
 
+        <!--Our JS -->
         <script type="text/javascript">
             //Script for controlling soundcloud widget API
             var scWidget;
@@ -130,37 +139,45 @@
     </head>
 
     <body>
-
         {% block header %}
-            <div class="header">
-
-                <span class="location">
-                    <img class="icon" src="{{ asset('resources/images/location.png') }}"
-                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        {{ app.user.location }}
-                    {% else %}
-                        Bath, UK
-                    {% endif %}
-                </span>
-
-                <span class="title"><a href="/">BEAT MACHINE</a></span>
-
-                <span class="loginbuttons">
-                    <ul>
+            <div class=".container-fluid header">
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2 location pull-left">
+                        <img class="icon" src="{{ asset('resources/images/location.png') }}">
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li><a href="/playlist/create">+</a></li>
-                            <li><a href="/profile?id={{ app.user.id }}">{{ app.user.username }}</a></li>
-                            <li><a href="/logout"><button>Logout</button></a></li>
+                            {{ app.user.location }}
                         {% else %}
-                            <li><a href="/login"><button>Log in</button></a></li>
-                            <li><a href="/register"><button>Register</button></a></li>
+                            Bath, UK
                         {% endif %}
-                    </ul>
-                </span>
+                    </div>
+
+                    <div class="title col-md-6"><a href="/">BEAT MACHINE</a></div>
+
+                    <div class="loginbuttons col-md-2">
+                        <ul class="pull-right">
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="usericon" class="glyphicon glyphicon-user
+"></span>  Welcome, {{ app.user.username }} <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/profile?id={{ app.user.id }}"><i class="icon-cog"></i> Profile</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="/logout"><i class="icon-off"></i> Logout</a></li>
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li><a href="/register"><button type="button" class="btn btn-primary">Register</button></a></li>
+                                <li><a href="/login"><button type="button" class="btn btn-success">Log in</button></a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         {% endblock %}
 
-        {% block body %}Empty body{% endblock %}
+        <div class="containter" id="body">
+            {% block body %}Empty body{% endblock %}
+        </div>
 
         {% block playbar %}
             <div class="playbar">
@@ -180,8 +197,13 @@
                 <iframe style="display:none;" id="so" src="http://w.soundcloud.com/player/?url="></iframe>
             </div>
         {% endblock %}
-
+        
+        <!-- To be overidden -->
         {% block javascripts %}{% endblock %}
-    </body>
 
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript for bootstrap -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    </body>
 </html>
