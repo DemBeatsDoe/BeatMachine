@@ -98,4 +98,11 @@ class PlaylistController extends Controller
 
         return new JsonResponse(array('votes' => $playlist->getVotes()));
     }
+
+    /**
+     * @Route("/tl")
+     */
+    public function tl() {
+        return $this->render('login.html.twig');
+    }
 }
