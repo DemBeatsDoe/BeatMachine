@@ -80,7 +80,7 @@ class User extends \FOS\UserBundle\Model\User
      *
      * @ORM\Column(name="location", type="string", length=64)
      */
-    private $location;
+    private $location = 'Bath, UK';
 
     /**
      * @return string

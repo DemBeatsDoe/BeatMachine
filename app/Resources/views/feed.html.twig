@@ -71,7 +71,7 @@
                     document.getElementById(textid).innerHTML = response.votes;
                     //Check if it has overtaken the top one
                     if (document.getElementById(textid).innerHTML > document.getElementById(aboveid).innerHTML) {
-                        swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
+                        //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
                     }
                     if (document.getElementById(textid).innerHTML < document.getElementById(belowid).innerHTML) {
                         //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);

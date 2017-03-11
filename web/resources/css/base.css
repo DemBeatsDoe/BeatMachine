@@ -54,9 +54,9 @@ body{
 }
 h.playlist-title{
     float: left;
-    position: relative;
-    left: 40px;
-    top: 8%;
+    position: absolute;
+    left: 230px;
+    top: 5%;
     margin: 0;
     padding: 0;
 
@@ -70,7 +70,6 @@ h.playlist-title a{
     font-size: 18pt;
     font-weight: 900;
     color: #2f364a;
-
     outline:none;
     text-decoration:none;
 }
