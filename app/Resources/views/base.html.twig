@@ -28,6 +28,11 @@
         {% block stylesheets %}
         {% endblock %}
 
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript for bootstrap -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
         <!--Soundcloud integration scripts-->
         <script type="text/javascript" src="http://w.soundcloud.com/player/api.js"></script>
 
@@ -123,7 +128,7 @@
                 //Set widget
                 scWidget = SC.Widget("so");
 
-                playSongAt(0, false);
+                redrawBar(0);
 
                 //Listen for song finish
                 scWidget.bind(SC.Widget.Events.FINISH, function() {
@@ -197,11 +202,6 @@
                 <iframe style="display:none;" id="so" src="http://w.soundcloud.com/player/?url="></iframe>
             </div>
         {% endblock %}
-
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <!-- Latest compiled and minified JavaScript for bootstrap -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
         <!-- To be overidden -->
         {% block javascripts %}{% endblock %}
