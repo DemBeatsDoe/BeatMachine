@@ -172,3 +172,15 @@ h.playlist-title a{
     color: #d04000;
     cursor: pointer;
 }
+
+.glyphicon.glyphicon-chevron-up:hover{
+    color: #ff5500;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.glyphicon.glyphicon-chevron-down:hover{
+    color: #ff5500;
+    cursor: pointer;
+    cursor: hand;
+}
