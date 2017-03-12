@@ -20,11 +20,11 @@
                 {% if next > playlists|length-1 %}
                     {% set next = playlists|length-1 %}
                 {% endif %}
-                <span class="glyphicon glyphicon-chevron-up" style="padding-top: 9px; padding-left: 3px;" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}'); this.className='glyphicon glyphicon-chevron-up clicked';"></span>
+                <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" style="padding-top: 9px; padding-left: 3px;" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
                 <br>
                 <span id="v{{ playlist.id }}">{{ playlist.getVotes }}</span>
                 <br>
-                <span class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; padding-left: 3px;" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}'); this.className='glyphicon glyphicon-chevron-down clicked';"></span>
+                <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; padding-left: 3px;" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
             </div>
 
 
@@ -71,13 +71,22 @@
                     document.getElementById(textid).innerHTML = response.votes;
                     //Check if it has overtaken the top one
                     if (document.getElementById(textid).innerHTML > document.getElementById(aboveid).innerHTML) {
-                        //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
+                        swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
                     }
                     if (document.getElementById(textid).innerHTML < document.getElementById(belowid).innerHTML) {
-                        //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);
+                        swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);
                     }
-                    waitingForData = false;
                 }
+            }
+
+            //Change the arrows state
+            if(direction=="up"){
+                document.getElementById("u"+playlistid).className='glyphicon glyphicon-chevron-up clicked';
+                document.getElementById("d"+playlistid).className='glyphicon glyphicon-chevron-down';
+            }
+            else if(direction=="down"){
+                document.getElementById("d"+playlistid).className='glyphicon glyphicon-chevron-down clicked';
+                document.getElementById("u"+playlistid).className='glyphicon glyphicon-chevron-up';
             }
         }
 
