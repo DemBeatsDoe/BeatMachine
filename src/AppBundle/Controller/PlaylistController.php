@@ -41,7 +41,8 @@ class PlaylistController extends Controller
             'playlistName' => $playlist->getName(),
             'playlistAuthor' => $user->getUsername(),
             'authorID' => $playlist->getUserID(),
-            'songs' => $songs
+            'songs' => $songs,
+            'editable' => false
         ));
     }
 
@@ -51,6 +52,41 @@ class PlaylistController extends Controller
      */
     public function createAction() {
         return $this->render('create_playlist.html.twig');
+    }
+
+    /**
+     * @Route("/playlist/edit")
+     */
+    public function editable(Request $request)
+    {
+        //Store the playlist id
+        $playlistID = $request->query->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+
+        //Get playlist + user data from DB
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+        if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist: ".$playlistID));
+
+        $user = $em->getRepository('AppBundle:User')->find($playlist->getUserId());
+        if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist user: ".$playlist->getUserID()));
+
+        //Get array of song entities from array of song IDs
+        $songs = array();
+        $songList = $playlist->getSongList();
+        foreach($songList as $i) {
+            array_push($songs, $em->getRepository('AppBundle:Song')->find($i));
+        }
+
+        return $this->render('users_playlist.html.twig', array(
+            'playlistArt' => $playlist->getArtLink(),
+            'playlistID' => $playlistID,
+            'playlistName' => $playlist->getName(),
+            'playlistAuthor' => $user->getUsername(),
+            'authorID' => $playlist->getUserID(),
+            'songs' => $songs,
+            'editable' => true
+        ));
     }
 
 
@@ -100,9 +136,79 @@ class PlaylistController extends Controller
     }
 
     /**
-     * @Route("/tl")
+     * @Route("/testlogin")
      */
     public function tl() {
         return $this->render('login.html.twig');
+    }
+
+    /**
+     * @Route("/playlist/changetitle")
+     */
+    public function updateDB(Request $request)
+    {
+        $playlistID = $request->request->get('playlistID');
+        $name = $request->request->get('name');
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+
+
+            $playlist->setName($name);
+            $em->merge($playlist);
+            $em->flush();
+        }
+
+        return new JsonResponse(array('newTitle' => $playlist->getName()));
+    }
+
+    /**
+     * @Route("/playlist/changesongname")
+     */
+    public function updateDBSongName(Request $request)
+    {
+        $playlistID = $request->request->get('playlistID');
+        $songIndex = $request->request->get('songID');
+        $name = $request->request->get('name');
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+            $song = $em->getRepository('AppBundle:Song')->find($playlist->getSongList()[$songIndex]);
+
+            $song->setName($name);
+
+            $em->merge($song);
+            $em->flush();
+        }
+
+        return new JsonResponse(array('newName' => $song->getName()));
+    }
+
+    /**
+     * @Route("/playlist/changesongartist")
+     */
+    public function updateDBSongArtist(Request $request)
+    {
+        $playlistID = $request->request->get('playlistID');
+        $songIndex = $request->request->get('songID');
+        $name = $request->request->get('name');
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+            $song = $em->getRepository('AppBundle:Song')->find($playlist->getSongList()[$songIndex]);
+
+            $song->setArtist($name);
+
+            $em->merge($song);
+            $em->flush();
+        }
+
+        return new JsonResponse(array('newArtist' => $song->getArtist()));
     }
 }

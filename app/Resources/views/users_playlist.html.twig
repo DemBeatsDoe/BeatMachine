@@ -72,11 +72,16 @@
             color: #2f364a;
         }
 
+        #editbutton {
+            display: inline-block;
+            margin: 12px;
+        }
+
     </style>
 {% endblock %}
 
 {% block javascripts %}
-    <script>
+    <script type="text/javascript">
         var lastClicked = false;
 
         function setActiveSong(clickedElement) {
@@ -86,16 +91,97 @@
             clickedElement.removeClass().addClass('playing');
             lastClicked = clickedElement;
         }
+
+        function changeTitle(playlistid, title) {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/changetitle", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + playlistid + '&name=' + title);
+        }
+
+        function changeSongName(playlistid, songid, name) {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/changesongname", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + playlistid + '&songID=' + songid + '&name=' + name);
+        }
+
+        function changeSongArtist(playlistid, songid, name) {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/changesongartist", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + playlistid + '&songID=' + songid + '&name=' + name);
+        }
+
+        $(document).ready(function() {
+            $(".blur").css("width", $(".clickMe").width());
+            $(".blur").css("height", $(".clickMe").height());
+        });
+
+        $('.clickMe').click(function () {
+            "use strict";
+            $(this).hide();
+            $('#' + $(this).attr('for'))
+                .val($(this).text())
+                .toggleClass("form-control")
+                .show()
+                .focus();
+        });
+
+        $('.blur').blur(function () {
+            "use strict";
+            $(this)
+                .hide()
+                .toggleClass("form-control");
+            var myid = (this).id;
+            $('span[for=' + myid + ']')
+                .text($(this).val())
+                .show();
+            //Update db
+            if ($(this).hasClass("playlistTitle")) {
+                changeTitle({{ playlistID }}, $(this).val())
+            } else if ($(this).hasClass("songName")) {
+                changeSongName({{ playlistID }}, myid[myid.length-1], $(this).val())  //TODO: This will only work for index 0-9 :(
+            } else if ($(this).hasClass("songArtist")) {
+                changeSongArtist({{ playlistID }}, myid[myid.length-1], $(this).val())
+            }
+        });
     </script>
 {% endblock %}
 
 {% block pagebody %}
         <div class="playlistHeader">
             <img class="playlistArt" src="{{ playlistArt }}">
+
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID  and editable %}
+            <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
+            <input value="" type="text" id="textBox1" name="textBox1" class="blur playlistTitle" hidden>
+        {% else %}
             <div class="playlistTitle">{{ playlistName }}</div>
+
+        {% endif %}
+
             <div class="playlistAuthor"><a href="/profile?id={{ authorID}}">Created by {{ playlistAuthor}}</a></div>
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
-                <div class="editbutton"><a href="/playlist/manage?id={{ playlistID }}">Edit this playlist</a></div>
+
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID%}
+                {% if editable %}
+                    <span id="editbutton">
+                    <a href="/playlist?id={{ playlistID }}">
+                        <button type="button" class="btn btn-default btn-md">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Done
+                        </button>
+                    </a>
+                </span>
+                {% else %}
+                    <span id="editbutton">
+                    <a href="/playlist/edit?id={{ playlistID }}">
+                        <button type="button" class="btn btn-default btn-md">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+                        </button>
+                    </a>
+                </span>
+                {% endif %}
+
             {% endif %}
         </div>
 
@@ -113,24 +199,33 @@
                 {% for song in songs %}
                     {% set a = loop.index0%}
                     <div>
-                    <tr id="{{ song.musicLink }}">
+                    <tr id="{{ song.musicLink }}" onclick=" playNewSong('{{ song.name }}', '{{ song.musicLink }}');
+                                                            {% for i in songs %}
+                                                                {% set b = loop.index0%}
+                                                                {% if b > a %}
+                                                                        addSongToPlaylist('{{ songs[b].name }}', '{{ songs[b].musicLink }}');
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            setActiveSong($('#{{ song.musicLink }}'));
+                                                            ">
                         <td>
                             {{ song.length }}
                         </td>
-                        <td onclick="
-                                playNewSong('{{ song.name }}', '{{ song.musicLink }}');
-                                {% for i in songs %}
-                                    {% set b = loop.index0%}
-                                    {% if b > a %}
-                                        addSongToPlaylist('{{ songs[b].name }}', '{{ songs[b].musicLink }}');
-                                    {% endif %}
-                                {% endfor %}
-                                setActiveSong($('#{{ song.musicLink }}'));
-                                ">
-                            {{ song.name }}
+                        <td>
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                                <span class="clickMe label label-info songName" for="songNameTextbox{{ a }}">{{ song.name }}</span>
+                                <input value="" type="text" id="songNameTextbox{{ a }}" name="songNameTextbox{{ a }}" class="blur songName" hidden>
+                            {% else %}
+                                {{ song.name }}
+                            {% endif %}
                         </td>
                         <td>
-                            {{ song.artist }}
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                                <span class="clickMe label label-info songArtist" for="songArtistTextbox{{ a }}">{{ song.artist }}</span>
+                                <input value="" type="text" id="songArtistTextbox{{ a }}" name="songArtistTextbox{{ a }}" class="blur songArtist" hidden>
+                            {% else %}
+                                {{ song.artist }}
+                            {% endif %}
                         </td>
                     </tr>
                     </div>
