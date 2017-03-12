@@ -10,6 +10,66 @@
     color: #fff;
 }
 
-.playbar .buttons {
-    padding-top: 15px;
+.playbar .playBarSubContainer{
+    width: 80%;
+    margin: auto;
+}
+
+.playbar .controlSection{
+    width: 180px;
+    height: 100px;
+    margin: auto;
+    float: left;
+    padding-top: 25px;
+}
+
+.playPauseButton{
+    background-color: transparent;
+    border-style: solid;
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.playPauseButton:hover{
+    color: #b6b6b9;
+    border-color: #b6b6b9;
+}
+.playPauseButton:focus {
+    outline:0;
+}
+.glyphicon.glyphicon-play {
+    font-size: 25px;
+}
+.glyphicon.glyphicon-pause {
+    font-size: 25px;
+}
+
+.navigateButton{
+    background-color: transparent;
+    border-style: solid;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.navigateButton:hover{
+    color: #b6b6b9;
+    border-color: #b6b6b9;
+}
+.navigateButton:focus {
+    outline:0;
+}
+
+.playbar .barSection{
+    height: 100px;
+    margin: auto;
+    margin-left: 180px;
+    padding-top: 25px;
+}
+
+.playbar #songTitleLabel{
+    padding-bottom: 6px;
+    font-family: 'Lato', sans-serif;
+    font-size: 12pt;
 }
