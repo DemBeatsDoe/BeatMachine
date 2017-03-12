@@ -84,6 +84,17 @@
     <script type="text/javascript">
         var lastClicked = false;
 
+        //Set this pages playlist
+        playBar.emptyPlaylist();
+        {% for song in songs %}
+            playBar.addSongToPlaylist('{{ song.name }}', '{{ song.musicLink }}');
+        {% endfor %}
+
+        //Lest listener for song change
+        document.addEventListener("newSongLoaded", function () {
+            setActiveSong($('#'+playBar.getCurrentTrackIndex()));
+        });
+
         function setActiveSong(clickedElement) {
             if(lastClicked!=false){
                 lastClicked.removeClass();
@@ -199,18 +210,8 @@
                 {% for song in songs %}
                     {% set a = loop.index0%}
                     <div>
-                    <tr id="{{ song.musicLink }}" onclick=" playNewSong('{{ song.name }}', '{{ song.musicLink }}');
-                                                            {% for i in songs %}
-                                                                {% set b = loop.index0%}
-                                                                {% if b > a %}
-                                                                        addSongToPlaylist('{{ songs[b].name }}', '{{ songs[b].musicLink }}');
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                            setActiveSong($('#{{ song.musicLink }}'));
-                                                            ">
-                        <td>
-                            {{ song.length }}
-                        </td>
+                    <tr id="{{ a }}" onclick="playBar.playSongAt({{ a }});">
+                        <td>{{ song.length }}</td>
                         <td>
                             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
                                 <span class="clickMe label label-info songName" for="songNameTextbox{{ a }}">{{ song.name }}</span>
