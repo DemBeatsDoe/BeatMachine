@@ -35,7 +35,7 @@
                 {% endif %}
                 </div>
 
-            <img class="album-art" src="{{ playlist.getArtLink }}" onclick="playBar.loadPlaylist(playlists[{{ a }}]); ">
+            <img class="album-art" src="{{ playlist.getArtLink }}">
             <h class="playlist-title">
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
             </h>
@@ -45,6 +45,7 @@
             {%  endfor %}
 
             <div class="playlist-info-box">
+                <button class="smallPlayPauseButton" id="playButton{{ a }}" onclick="setActivePlaylist({{ a }})"><span class="glyphicon glyphicon-play small"></span></button>
                 <div class="playlist-heartButton"></div>
                 <div class="playlist-shareButton">
                     Share
@@ -70,6 +71,21 @@
 
         ];
 
+        function setActivePlaylist(localIndex) {
+            //Set all buttons to inactive
+            $(".smallPlayPauseButton").attr("class", "smallPlayPauseButton");
+            $(".smallPlayPauseButton").find(".glyphicon").attr("class", "glyphicon glyphicon-play small");
+
+            //Set given button to active
+            $("#playButton"+localIndex).attr("class", "smallPlayPauseButton clicked");
+            $("#playButton"+localIndex).find(".glyphicon").attr("class", "glyphicon glyphicon-pause small");
+
+            //Play playlist
+            playBar.loadPlaylist(playlists[localIndex]);
+
+            //$("#playPauseIcon").removeClass().addClass('glyphicon glyphicon-pause');
+        }
+
         window.onload = function(){
             window.onscroll = requestNextPlaylist;
             requestNextPlaylist();
@@ -88,10 +104,10 @@
                     document.getElementById(textid).innerHTML = response.votes;
                     //Check if it has overtaken the top one
                     if (document.getElementById(textid).innerHTML > document.getElementById(aboveid).innerHTML) {
-                        swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
+                        //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
                     }
                     if (document.getElementById(textid).innerHTML < document.getElementById(belowid).innerHTML) {
-                        swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);
+                        //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);
                     }
                 }
             }

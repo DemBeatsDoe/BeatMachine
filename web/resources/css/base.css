@@ -183,6 +183,37 @@ h.playlist-title a{
     cursor: pointer;
 }
 
+.smallPlayPauseButton{
+    background-color: transparent;
+    border-style: solid;
+    color: #F69A6C;
+    border-color: #F69A6C;
+    text-align: center;
+    margin-left: 8px;
+    padding-left: 1px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.smallPlayPauseButton.clicked{
+    color: #ff5500;
+    border-color: #ff5500;
+}
+.smallPlayPauseButton:hover{
+    color: #d04000;
+    border-color: #d04000;
+}
+.smallPlayPauseButton:focus {
+    outline:0;
+}
+.glyphicon.glyphicon-play.small {
+    font-size: 18px;
+}
+.glyphicon.glyphicon-pause.small {
+    font-size: 18px;
+    animation: fade-in 1s;
+}
+
 .glyphicon.glyphicon-chevron-up:hover{
     color: #ff5500;
     cursor: pointer;
