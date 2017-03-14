@@ -14,6 +14,14 @@ var playBar = (function (jQueryRef) {
         playSongAt(addSongToPlaylist(name, id));
     }
 
+    function loadPlaylist(songsArray, autoplay=true) {
+        emptyPlaylist();
+        for (i = 0; i < songsArray.length; i++) {
+            addSongToPlaylist(songsArray[i].songName, songsArray[i].trackID);
+        }
+        playSongAt(0, autoplay);
+    }
+
     //Function to add a song to the playlist
     function addSongToPlaylist(songName, trackID) {
         playlist.push({name: songName, url:"http://api.soundcloud.com/tracks/"+trackID});
@@ -136,6 +144,7 @@ var playBar = (function (jQueryRef) {
     });
 
     return {
+        loadPlaylist: loadPlaylist,
         emptyPlaylist: emptyPlaylist,
         addSongToPlaylist: addSongToPlaylist,
         playSongAt: playSongAt,

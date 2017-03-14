@@ -35,12 +35,12 @@
                 {% endif %}
                 </div>
 
-            <img class="album-art" src="{{ playlist.getArtLink }}">
+            <img class="album-art" src="{{ playlist.getArtLink }}" onclick="playBar.loadPlaylist(playlists[{{ a }}]); ">
             <h class="playlist-title">
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
             </h>
 
-            {% for url in songLinks[a] %}
+            {% for url in songArt[a] %}
                 <img class="songIcon" src="{{ url }}">
             {%  endfor %}
 
@@ -60,6 +60,16 @@
 
 {% block javascripts %}
     <script type="text/javascript">
+        //Add initial playlists
+        var playlists = [
+        {% for playlist in playlists %}
+            {% set a = loop.index0%}
+            [{% for name in songNames[a] %}{% set b = loop.index0%}{songName: "{{ name }}", trackID:"{{ songLinks[a][b] }}"}{% if not loop.last %},{% endif %}{%  endfor %}]{% if not loop.last %},
+{% endif %}
+        {% endfor %}
+
+        ];
+
         window.onload = function(){
             window.onscroll = requestNextPlaylist;
             requestNextPlaylist();
