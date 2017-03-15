@@ -86,14 +86,14 @@
                 <div class="playBarSubContainer">
                     <div class="controlSection">
                         <div class="buttons">
-                            <button class="navigateButton" onclick="playBar.playPrevSong();"><span class="glyphicon glyphicon-backward"></span></button>
-                            <button class="playPauseButton" onclick="playBar.togglePlay();"><span id="playPauseIcon" class="glyphicon glyphicon-play"></span></button>
-                            <button class="navigateButton" onclick="playBar.playNextSong();"><span class="glyphicon glyphicon-forward"></span></button>
+                            <button class="navigateButton left" onclick="playBar.playPrevSong();"><span class="glyphicon glyphicon-backward"></span></button>
+                            <button class="playPauseButton" onclick="playBar.togglePlay(); //document.body.focus();"><span id="playPauseIcon" class="glyphicon glyphicon-play"></span></button>
+                            <button class="navigateButton right" onclick="playBar.playNextSong();"><span class="glyphicon glyphicon-forward"></span></button>
                         </div>
                     </div>
                     <div class="barSection">
-                        <div id="songTitleLabel">Now Playing: </div>
                         <canvas id="progressBar" width="400" height="10"></canvas>
+                        <div id="songTitleLabel">Now Playing: </div>
                     </div>
                 </div>
 
