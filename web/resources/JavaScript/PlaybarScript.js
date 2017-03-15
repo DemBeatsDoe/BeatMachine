@@ -17,14 +17,14 @@ var playBar = (function (jQueryRef) {
     function loadPlaylist(songsArray, autoplay=true) {
         emptyPlaylist();
         for (i = 0; i < songsArray.length; i++) {
-            addSongToPlaylist(songsArray[i].songName, songsArray[i].trackID);
+            addSongToPlaylist(songsArray[i].songName, songsArray[i].trackID);//, songsArray[i].songArt);
         }
         playSongAt(0, autoplay);
     }
 
     //Function to add a song to the playlist
-    function addSongToPlaylist(songName, trackID) {
-        playlist.push({name: songName, url:"http://api.soundcloud.com/tracks/"+trackID});
+    function addSongToPlaylist(songName, trackID, songArt="https://upload.wikimedia.org/wikipedia/en/1/16/All_star.jpg") {
+        playlist.push({name: songName, url:"http://api.soundcloud.com/tracks/"+trackID, art: songArt});
         return playlist.length-1;
     }
 
@@ -71,8 +71,12 @@ var playBar = (function (jQueryRef) {
 
     //Function to play a specific song in the playlist
     function playSongAt(index, autoplay=true) {
-        redrawBar(0);
-        $("#songTitleLabel").text(playlist[index].name);
+        //redrawBar(0);
+        $('#songTitleLabel').stop(false, true).animate({'opacity': 0}, 0, function () {
+            $(this).text(playlist[index].name);
+        }).animate({'opacity': 1}, 500);
+        //$("#songTitleLabel").text(playlist[index].name);
+        $("#playbarIcon0").attr("src", playlist[index].art);
         scWidget.load(playlist[index].url, {auto_play: autoplay});
         currentTrackIndex = index;
 
@@ -92,27 +96,44 @@ var playBar = (function (jQueryRef) {
 
     //Function to redraw the progress bar at a particular location
     function redrawBar(percentageComplete) {
+        var edgeOffset = 5;
+
         //Clear the canvas
         ctx.clearRect(0, 0, barCanvas.width, barCanvas.height);
 
         //Draw base line
         ctx.globalAlpha = 0.4;
         ctx.strokeStyle = "#fefefe";
+        ctx.lineCap = "round";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, barCanvas.height/2);
-        ctx.lineTo(barCanvas.width, barCanvas.height/2);
-        ctx.closePath();
+        ctx.moveTo(edgeOffset, barCanvas.height/2);
+        ctx.lineTo(barCanvas.width-edgeOffset, barCanvas.height/2);
         ctx.stroke();
 
         //Draw progress line
+        ctx.save();
         ctx.globalAlpha = 1;
+        ctx.lineWidth = 4;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 1;
         ctx.beginPath();
-        ctx.moveTo(0, barCanvas.height/2);
-        ctx.lineTo(barCanvas.width*percentageComplete, barCanvas.height/2);
-        ctx.closePath();
+        ctx.moveTo(edgeOffset, barCanvas.height/2);
+        ctx.lineTo(edgeOffset+(barCanvas.width-edgeOffset*2)*percentageComplete, barCanvas.height/2);
         ctx.stroke();
 
+        //Draw circle
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "#fefefe";
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetY = 2;
+        ctx.beginPath();
+        ctx.arc(edgeOffset+barCanvas.width*percentageComplete,barCanvas.height/2,5,0,2*Math.PI);
+        ctx.fill();
+        ctx.restore();
 
         //ctx.fillRect(0,0, 10,10);
     }
