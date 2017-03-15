@@ -80,7 +80,11 @@ var playBar = (function (jQueryRef) {
         //$("#songTitleLabel").text(playlist[index].name);
 
         //Set the song art
-        $("#playbarIcon0").attr("src", playlist[index].art);
+        //$("#playbarIcon0").attr("src", playlist[index].art);
+        $("#playbarIcon0").fadeTo(0,0.30, function() {
+            $("#playbarIcon0").attr("src", playlist[index].art);
+        }).fadeTo(500,1);
+
         $("#playbarIconF1").attr("src", playlist[negMod(index+1,playlist.length)].art);
         $("#playbarIconB1").attr("src", playlist[negMod(index-1,playlist.length)].art);
         $("#playbarIconF2").attr("src", playlist[negMod(index+2,playlist.length)].art);
