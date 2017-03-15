@@ -17,7 +17,7 @@ var playBar = (function (jQueryRef) {
     function loadPlaylist(songsArray, autoplay=true) {
         emptyPlaylist();
         for (i = 0; i < songsArray.length; i++) {
-            addSongToPlaylist(songsArray[i].songName, songsArray[i].trackID);//, songsArray[i].songArt);
+            addSongToPlaylist(songsArray[i].songName, songsArray[i].trackID, songsArray[i].songArt);
         }
         playSongAt(0, autoplay);
     }
@@ -72,11 +72,21 @@ var playBar = (function (jQueryRef) {
     //Function to play a specific song in the playlist
     function playSongAt(index, autoplay=true) {
         //redrawBar(0);
+
+        //Set the song name
         $('#songTitleLabel').stop(false, true).animate({'opacity': 0}, 0, function () {
             $(this).text(playlist[index].name);
         }).animate({'opacity': 1}, 500);
         //$("#songTitleLabel").text(playlist[index].name);
+
+        //Set the song art
         $("#playbarIcon0").attr("src", playlist[index].art);
+        $("#playbarIconF1").attr("src", playlist[negMod(index+1,playlist.length)].art);
+        $("#playbarIconB1").attr("src", playlist[negMod(index-1,playlist.length)].art);
+        $("#playbarIconF2").attr("src", playlist[negMod(index+2,playlist.length)].art);
+        $("#playbarIconB2").attr("src", playlist[negMod(index-2,playlist.length)].art);
+
+        //Load the song
         scWidget.load(playlist[index].url, {auto_play: autoplay});
         currentTrackIndex = index;
 
@@ -163,6 +173,10 @@ var playBar = (function (jQueryRef) {
             redrawBar((soundInfo.relativePosition));
         })
     });
+
+    function negMod(num, den) {
+        return (((num)%den)+den)%den;
+    }
 
     return {
         loadPlaylist: loadPlaylist,
