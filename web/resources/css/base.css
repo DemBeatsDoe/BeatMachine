@@ -138,6 +138,54 @@ h.playlist-title a{
     }
 }
 
+.createPlaylistButton{
+    position: relative;
+    top: -20px;
+    width: 132px;
+    height: 96px;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 42px;
+}
+.createPlaylistButton:hover{
+    text-decoration: none;
+}
+
+.createPlaylistButtonIcon{
+    background-image: url("../images/createPlaylistButton.png");
+    width: 60px;
+    height: 60px;
+    display: block;
+    margin: 0 auto;
+    background-size: cover;
+    margin-bottom: 10px;
+}
+.createPlaylistButton:hover .createPlaylistButtonIcon{
+    background-image: url("../images/createPlaylistButtonHover.png");
+    cursor: pointer;
+}
+
+.createPlaylistButtonText{
+    display: block;
+    margin: 0 auto;
+    width: 132px;
+    color: white;
+    background-color: #ff5500;
+    border-radius: 25px;
+    padding: 1px;
+    text-align: center;
+    outline:none;
+    text-decoration:none;
+
+    font-family: 'Lato', sans-serif;
+    font-size: 13pt;
+    font-weight: 500;
+}
+.createPlaylistButton:hover .createPlaylistButtonText{
+    background-color: #d04000;
+    text-decoration: none;
+}
+
 .playlist-heartButton{
     background-image: url("../images/heart-icon-grey.png");
     float: left;
