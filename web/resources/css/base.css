@@ -106,9 +106,11 @@ h.playlist-title a{
 }
 
 .playlist .voteButtons {
-    float:left;
+    float: left;
+    margin-left: 14px;
+    width: 40px;
+    height: 100px;
     display: block;
-    padding-left: 19px;
     font-size: 20px;
 }
 .playlist .voteButtons img{
@@ -216,6 +218,22 @@ h.playlist-title a{
     animation: fade-in 1s;
 }
 
+.voteCounter{
+    position:relative;
+    padding-right: 1px;
+    top: -19px;
+    display:block;
+    width:100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.glyphicon.glyphicon-chevron-up{
+    padding-top: 9px;
+    width: 19px;
+    display: block;
+    margin: 0 auto;
+}
 .glyphicon.glyphicon-chevron-up:hover{
     color: #ff5500;
     cursor: pointer;
@@ -228,6 +246,13 @@ h.playlist-title a{
     animation-iteration-count: 1;
 }
 
+.glyphicon.glyphicon-chevron-down{
+    position: relative;
+    top: -41px;
+    width: 19px;
+    display: block;
+    margin: 0 auto;
+}
 .glyphicon.glyphicon-chevron-down:hover{
     color: #ff5500;
     cursor: pointer;
