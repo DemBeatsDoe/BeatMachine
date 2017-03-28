@@ -7,6 +7,11 @@
 
 {% block body %}
     <div class="feed">
+        <div class="modeSelector">
+            <a class="modeItem {% if mode=='top' %}modeItemActive{% endif %}"  href="./?mode=top">Popular</a>
+            <a class="modeItem {% if mode=='new' %}modeItemActive{% endif %}" href="./?mode=new">New Releases</a>
+        </div>
+
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
         <a class="createPlaylistButton" href="/createPlaylist">
             <div class="createPlaylistButtonIcon" ></div>
