@@ -18,9 +18,7 @@ class CreatePlaylistController extends Controller
      */
     public function indexAction()
     {
-        $playlists = array();
         return $this->render('createPlaylist.html.twig', [
-            'playlists' => $playlists
         ]);
     }
 
@@ -32,16 +30,14 @@ class CreatePlaylistController extends Controller
     {
 
         //Store the user id
-        $userID = $request->request->get('userID');
+        $userID = $request->request->get('id');
 
         $playlistName = $request->request->get('name');
         $em = $this->getDoctrine()->getManager();
 
-        $playlist = $em->getRepository('AppBundle:Playlist')->find(id);
-
         //Get user from DB
-        $user = $em->getRepository('AppBundle:User')->find($userID);
-        if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find user: ".$userID));
+        //$user = $em->getRepository('AppBundle:User')->find($userID);
+        //if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find user: ".$userID));
 
         $playlist = new Playlist();
         $playlist->setName($playlistName);
@@ -53,12 +49,12 @@ class CreatePlaylistController extends Controller
         $playlist->setSongList([]);
 
         $em->merge($playlist);
-        $em->merge($user);
+        //$em->merge($user);
         $em->flush();
 
         return new JsonResponse(array(
         //return $this->render('createPlaylist.html.twig', array(
-            'user' => $user,
+            //'user' => $user,
             'playlist' => $playlist
         ));
     }
