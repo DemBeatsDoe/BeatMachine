@@ -48,14 +48,14 @@ class CreatePlaylistController extends Controller
         $playlist->setArtLink('https://www.theedgesusu.co.uk/wp-content/uploads/2017/03/Alt-J.jpg');
         $playlist->setSongList([]);
 
-        $em->merge($playlist);
-        //$em->merge($user);
+        $em->persist($playlist);
         $em->flush();
+
+        $playlistID = $playlist->getId();
 
         return new JsonResponse(array(
         //return $this->render('createPlaylist.html.twig', array(
-            //'user' => $user,
-            'playlist' => $playlist
+            'playlistID' => $playlistID,
         ));
     }
 }

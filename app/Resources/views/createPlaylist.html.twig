@@ -38,15 +38,25 @@
 {% block javascripts %}
 <script type="text/javascript">
 
+    var playlistResponse;
     function createPlaylist() {
         var name = $("#playlistName").val();
-        alert(name);
 
         xxhttp = new XMLHttpRequest();
         xxhttp.open("POST", "/callCreatePlaylist", true);
         xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xxhttp.send('name=' + name + '&id=' + {{ app.user.id }});
+
+
+    xxhttp.onreadystatechange = function () {
+
+        if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+            window.alert("Success")
+            playlistResponse = JSON.parse(xxhttp.responseText).playlistID;
+            window.location = '/playlist?id='+playlistResponse;
         }
+    }
+    }
 
 </script>
 {% endblock %}
