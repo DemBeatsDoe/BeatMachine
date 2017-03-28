@@ -7,6 +7,12 @@
 
 {% block body %}
     <div class="feed">
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+        <a class="createPlaylistButton" href="/createPlaylist">
+            <div class="createPlaylistButtonIcon" ></div>
+            <div class="createPlaylistButtonText">Create Playlist</div>
+        </a>
+        {% endif %}
         {% for playlist in playlists %}
             {% set a = loop.index0%}
 
@@ -21,17 +27,17 @@
                     {% set next = playlists|length-1 %}
                 {% endif %}
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" style="padding-top: 9px; padding-left: 3px;" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
                     <br>
-                    <span id="v{{ playlist.id }}">{{ playlist.getVotes }}</span>
+                    <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                     <br>
-                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down {% if playlist.id in app.user.downVotes %}clicked{% endif %}" style="padding-top: 3px; padding-left: 3px;" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down {% if playlist.id in app.user.downVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
                 {% else %}
-                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" style="padding-top: 9px; padding-left: 3px;" onclick="window.location = '/login';"></span>
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" onclick="window.location = '/login';"></span>
                     <br>
-                    <span id="v{{ playlist.id }}">{{ playlist.getVotes }}</span>
+                    <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                     <br>
-                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; padding-left: 3px;" onclick="window.location = '/login';"></span>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down" onclick="window.location = '/login';"></span>
                 {% endif %}
                 </div>
 
