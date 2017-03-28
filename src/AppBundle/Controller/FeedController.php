@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class FeedController extends Controller
 {
@@ -16,8 +17,14 @@ class FeedController extends Controller
     /**
      * @Route("/")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        //Check what mode the viewer wants (top, new, etc)
+        $mode = $request->query->get('mode');
+        if(is_null($mode)){
+            $mode = "top";
+        }
+
         //Get DB entity manager
         $em = $this->getDoctrine()->getManager();
 
@@ -26,7 +33,11 @@ class FeedController extends Controller
         if ($user != null) $loc = $user->getLocation();
 
         //Get public playlists in order of votes
-        $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
+        if($mode == "new"){
+            $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('id' => 'DESC'), 10);
+        }
+        else{$this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
+        }
 
         //Get array of song art links for each playlist
         $songArt= array();
