@@ -39,18 +39,13 @@
 <script type="text/javascript">
 
     function createPlaylist() {
-        alert("func called");
         var name = $("#playlistName").val();
-        /*
+        alert(name);
+
         xxhttp = new XMLHttpRequest();
         xxhttp.open("POST", "/callCreatePlaylist", true);
         xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xxhttp.send('name=' + name);
-        */
-        xxhttp = new XMLHttpRequest();
-        xxhttp.open("POST", "/callCreatePlaylist", true);
-        xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xxhttp.send('name=' + name + '&userID=' + userID);
+        xxhttp.send('name=' + name + '&id=' + {{ app.user.id }});
         }
 
 </script>
