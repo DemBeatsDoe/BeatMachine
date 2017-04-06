@@ -85,6 +85,8 @@
             font-weight: 900;
             color: #5e5e61;
         }
+
+
     </style>
 {% endblock %}
 
@@ -102,8 +104,6 @@
             <div class="profileInfo"><span class="counter">{{ playlists|length }}</span>Playlists Created</div>
             <div class="profileInfo"><span class="counter">{{ count }}</span>Votes on their Playlists</div>
             <div class="profileInfo"><span class="counter">18</span>Shares on their Playlists</div>
-
-            <a href="{{ path('fos_user_change_password') }}">Back to Log in</a>
         </div>
 
      <div class="settingsPlaylistCollection" >
@@ -111,22 +111,15 @@
          <div class="settings">
 
              <div class="settingsTitle">Settings</div>
-
-
-
-
-                 <form class="form-inline">
+                 <form class="form-inline text-center">
                      <div class="form-group">
                          <label for="Email">Change Email</label>
-                         <input type="email" class="form-control" placeholder="newemail@mail.com">
+                         <input type="email" class="form-control" placeholder="Enter your new email here">
                      </div>
-                        <button type="submit" class="btn btn-default">Update</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                  </form>
 
              </div>
-
-             <!-- <a href="{{ path('fos_user_change_password') }}">Back to Log in</a>
-             -->
             <br>
          <div class="text-center">
              <a href="{{ path('fos_user_change_password') }}" class="btn btn-primary">Change Password</a>
