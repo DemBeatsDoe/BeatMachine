@@ -4,20 +4,23 @@
 
 {% block stylesheets %}
     <style>
-        body{
+        body {
             background: #eeeeee;
         }
-        .playlistHeader{
+
+        .playlistHeader {
             height: 130px;
             position: relative;
             margin-bottom: 20px;
         }
-        .playlistArt{
+
+        .playlistArt {
             height: 100%;
             position: relative;
             float: left;
         }
-        .playlistTitle{
+
+        .playlistTitle {
             position: relative;
             left: 10px;
 
@@ -26,7 +29,8 @@
             font-weight: 900;
             color: #2f364a;
         }
-        .playlistAuthor{
+
+        .playlistAuthor {
             position: relative;
             left: 10px;
             margin-top: 2px;
@@ -35,39 +39,46 @@
             font-size: 13pt;
             color: #8f8f92;
         }
-        .playlistAuthor a{
+
+        .playlistAuthor a {
             font-family: 'Lato', sans-serif;
             font-size: 13pt;
             color: #8f8f92;
 
-            outline:none;
-            text-decoration:none;
+            outline: none;
+            text-decoration: none;
         }
-        .songsTable{
+
+        .songsTable {
             width: 100%;
             font-family: 'Lato', sans-serif;
             color: #57575a;
             border-collapse: collapse;
             margin-bottom: 10px;
         }
+
         .songsTable tr {
             border-bottom: 1px solid black;
             border-color: #b4b4b7;
         }
-        .songsTable th{
+
+        .songsTable th {
             text-align: left;
             padding-bottom: 6px;
         }
-        .songsTable td{
+
+        .songsTable td {
             padding-top: 9px;
             padding-bottom: 9px;
             cursor: pointer;
             cursor: hand;
         }
-        .songsTable tbody tr:hover{
+
+        .songsTable tbody tr:hover {
             background-color: #eeeeee;
         }
-        .songsTable .playing{
+
+        .songsTable .playing {
             font-weight: bold;
             color: #2f364a;
         }
@@ -87,16 +98,16 @@
         //Set this pages playlist
         playBar.emptyPlaylist();
         {% for song in songs %}
-            playBar.addSongToPlaylist('{{ song.name }}', '{{ song.musicLink }}');
+        playBar.addSongToPlaylist('{{ song.name }}', '{{ song.musicLink }}');
         {% endfor %}
 
         //Lest listener for song change
         document.addEventListener("newSongLoaded", function () {
-            setActiveSong($('#'+playBar.getCurrentTrackIndex()));
+            setActiveSong($('#' + playBar.getCurrentTrackIndex()));
         });
 
         function setActiveSong(clickedElement) {
-            if(lastClicked!=false){
+            if (lastClicked != false) {
                 lastClicked.removeClass();
             }
             clickedElement.removeClass().addClass('playing');
@@ -124,10 +135,63 @@
             xxhttp.send('playlistID=' + playlistid + '&songID=' + songid + '&name=' + name);
         }
 
-        $(document).ready(function() {
+        function getSongIDFromDoc(doc) {
+            var pos = doc.toString().indexOf('{"id":');
+            var pos2 = doc.find(".widgetEmbed__textInput").val();
+            window.alert(pos + "; " + pos2);
+        }
+
+        function getSongIDFromURL(url_unprocessed) {
+
+            var url = url_unprocessed;
+            /*
+            //Sanitise url
+            if (url_unprocessed.includes('https://')) {
+                url = url_unprocessed.substr(8);
+            }
+            if (url_unprocessed.includes('http://')) {
+                url = url_unprocessed.substr(7);
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.responseType = 'document';
+            xhr.send();
+            xhr.onload = function(e) {
+                var doc = e.target.responseXML;
+                window.alert("Page received");
+                return getSongIDFromDoc(doc);
+            }
+            */
+
+            $.get(url, function(data) {
+                var data = $(data);
+                var title = $("#div", data).attr("title");
+
+                alert(title);
+            });
+        }
+
+        $('#addSongButton').click(function() {
+            getSongIDFromURL($('#songURL').val());
+        });
+
+        $('#songURL').on("keyPress", function(e) {
+            if(e.which === 13){
+
+                //Disable textbox to prevent multiple submit
+                $(this).attr("disabled", "disabled");
+
+                getSongIDFromURL($('#songURL').val());
+            }
+        });
+
+        $(document).ready(function () {
             $(".blur").css("width", $(".clickMe").width());
             $(".blur").css("height", $(".clickMe").height());
         });
+
+
 
         $('.clickMe').click(function () {
             "use strict";
@@ -152,17 +216,17 @@
             if ($(this).hasClass("playlistTitle")) {
                 changeTitle({{ playlistID }}, $(this).val())
             } else if ($(this).hasClass("songName")) {
-                changeSongName({{ playlistID }}, myid[myid.length-1], $(this).val())  //TODO: This will only work for index 0-9 :(
+                changeSongName({{ playlistID }}, myid[myid.length - 1], $(this).val())  //TODO: This will only work for index 0-9 :(
             } else if ($(this).hasClass("songArtist")) {
-                changeSongArtist({{ playlistID }}, myid[myid.length-1], $(this).val())
+                changeSongArtist({{ playlistID }}, myid[myid.length - 1], $(this).val())
             }
         });
     </script>
 {% endblock %}
 
 {% block pagebody %}
-        <div class="playlistHeader">
-            <img class="playlistArt" src="{{ playlistArt }}">
+    <div class="playlistHeader">
+        <img class="playlistArt" src="{{ playlistArt }}">
 
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID  and editable %}
             <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
@@ -172,24 +236,13 @@
 
         {% endif %}
 
-            <div class="playlistAuthor"><a href="/profile?id={{ authorID}}">Created by {{ playlistAuthor}}</a></div>
+        <div class="playlistAuthor"><a href="/profile?id={{ authorID }}">Created by {{ playlistAuthor }}</a></div>
 
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID%}
-
-                {#
-                <div style="margin-bottom: 10px" class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
-                    <input id="songURL" type="url" class="form-control" name="songURL" placeholder="URL of song">
-                </div>
-                <!-- Button -->
-                <div style="margin-bottom: 25px" class="input-group">
-                    <button type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>
-                </div>
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
 
 
-                 {% if editable %}
-
-                    <span id="editbutton">
+            {% if editable %}
+                <span id="editbutton">
                     <a href="/playlist?id={{ playlistID }}">
                         <button type="button" class="btn btn-default btn-md">
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Done
@@ -197,71 +250,73 @@
                     </a>
 
                 </span>
-                {% else %}
-                    <span id="editbutton">
+            {% else %}
+                <span id="editbutton">
                     <a href="/playlist/edit?id={{ playlistID }}">
                         <button type="button" class="btn btn-default btn-md">
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
                         </button>
                     </a>
                 </span>
-                {% endif %}
-                #}
-
             {% endif %}
-        </div>
-
-        <table class="songsTable">
-
-            <thead>
-                <tr>
-                    <th>Length</th>
-                    <th>Song Name</th>
-                    <th>Artist</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for song in songs %}
-                    {% set a = loop.index0%}
-                    <div>
-                    <tr id="{{ a }}" onclick="playBar.playSongAt({{ a }});">
-                        <td>{{ song.length }}</td>
-                        <td>
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
-                                <span class="clickMe label label-info songName" for="songNameTextbox{{ a }}">{{ song.name }}</span>
-                                <input value="" type="text" id="songNameTextbox{{ a }}" name="songNameTextbox{{ a }}" class="blur songName" hidden>
-                            {% else %}
-                                {{ song.name }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
-                                <span class="clickMe label label-info songArtist" for="songArtistTextbox{{ a }}">{{ song.artist }}</span>
-                                <input value="" type="text" id="songArtistTextbox{{ a }}" name="songArtistTextbox{{ a }}" class="blur songArtist" hidden>
-                            {% else %}
-                                {{ song.artist }}
-                            {% endif %}
-
-                        </td>
-                    </tr>
-                    </div>
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID%}
-
-            <div style="margin-bottom: 10px" class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
-                <div shorterbox style='display:block; float:left;width:80%; margin-right:8px;'>
-                    <input id="songURL" type="url" class="form-control" name="songURL" placeholder="URL of song">
-                </div>
-                <button type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>
-            </div>
 
 
         {% endif %}
+    </div>
+
+    <table class="songsTable">
+
+        <thead>
+        <tr>
+            <th>Length</th>
+            <th>Song Name</th>
+            <th>Artist</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for song in songs %}
+            {% set a = loop.index0 %}
+            <div>
+                <tr id="{{ a }}" onclick="playBar.playSongAt({{ a }});">
+                    <td>{{ song.length }}</td>
+                    <td>
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                            <span class="clickMe label label-info songName"
+                                  for="songNameTextbox{{ a }}">{{ song.name }}</span>
+                            <input value="" type="text" id="songNameTextbox{{ a }}" name="songNameTextbox{{ a }}"
+                                   class="blur songName" hidden>
+                        {% else %}
+                            {{ song.name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                            <span class="clickMe label label-info songArtist"
+                                  for="songArtistTextbox{{ a }}">{{ song.artist }}</span>
+                            <input value="" type="text" id="songArtistTextbox{{ a }}" name="songArtistTextbox{{ a }}"
+                                   class="blur songArtist" hidden>
+                        {% else %}
+                            {{ song.artist }}
+                        {% endif %}
+
+                    </td>
+                </tr>
+            </div>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
+
+        <div style="margin-bottom: 10px" class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
+            <div shorterbox style='display:block; float:left;width:80%; margin-right:8px;'>
+                <input id="songURL" type="url" class="form-control" name="songURL" placeholder="URL of song">
+            </div>
+            <button id="addSongButton" type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>
+        </div>
+    {% endif %}
 {% endblock %}
