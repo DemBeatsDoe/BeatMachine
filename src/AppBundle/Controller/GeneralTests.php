@@ -22,4 +22,12 @@ class GeneralTests extends Controller
     {
         return $this->render('tests/seamlessPage1.html.twig', array());
     }
+
+    /**
+     * @Route("/christest")
+     */
+    public function chrisAction(Request $request)
+    {
+        return $this->render('christest.html.twig', array());
+    }
 }
