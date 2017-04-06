@@ -192,6 +192,16 @@ h.playlist-title a{
     border:2px solid #ff5500;
 }
 
+.locationLabel{
+    text-align: center;
+    position: relative;
+    top: -30px;
+
+    font-family: 'Lato', sans-serif;
+    font-size: 18pt;
+    font-weight: 900;
+}
+
 .createPlaylistButton{
     position: relative;
     top: -20px;
@@ -328,6 +338,18 @@ h.playlist-title a{
     width:100%;
     margin: 0 auto;
     text-align: center;
+}
+
+.glyphicon.disabled{
+    color: #8f8f92;
+}
+.glyphicon.glyphicon-chevron-up.disabled:hover{
+    color: #8f8f92;
+    cursor: default;
+}
+.glyphicon.glyphicon-chevron-down.disabled:hover{
+    color: #8f8f92;
+    cursor: default;
 }
 
 .glyphicon.glyphicon-chevron-up{

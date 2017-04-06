@@ -28,9 +28,13 @@ class FeedController extends Controller
         //Get DB entity manager
         $em = $this->getDoctrine()->getManager();
 
-        $loc = "Bath, UK";
-        $user = $this->getUser();
-        if ($user != null) $loc = $user->getLocation();
+        //Check if the user has requested a particular location
+        $loc = $request->query->get('loc');
+        if(is_null($loc)){
+            $loc = "Bath, UK";
+            $user = $this->getUser();
+            if ($user != null) $loc = $user->getLocation();
+        }
 
         //Get public playlists in order of votes
         if($mode == "new"){
@@ -58,7 +62,7 @@ class FeedController extends Controller
             array_push($songLinks, $linkarr);
         }
 
-        return $this->render('feed.html.twig', array('playlists' => $this->playlists, 'songArt' => $songArt, 'songNames' => $songNames, 'songLinks' => $songLinks, 'mode' => $mode));
+        return $this->render('feed.html.twig', array('location' => $loc, 'playlists' => $this->playlists, 'songArt' => $songArt, 'songNames' => $songNames, 'songLinks' => $songLinks, 'mode' => $mode));
     }
 
     /**

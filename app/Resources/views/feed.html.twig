@@ -11,6 +11,7 @@
             <a class="modeItem {% if mode=='top' %}modeItemActive{% endif %}"  href="./?mode=top">Popular</a>
             <a class="modeItem {% if mode=='new' %}modeItemActive{% endif %}" href="./?mode=new">New Releases</a>
         </div>
+        <div class="locationLabel">Playlists from {{ location }}</div>
 
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
         <a class="createPlaylistButton" href="/createPlaylist">
@@ -32,11 +33,21 @@
                     {% set next = playlists|length-1 %}
                 {% endif %}
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    {% if location==app.user.location  %}
                     <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
                     <br>
                     <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                     <br>
                     <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down {% if playlist.id in app.user.downVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
+
+                    {% else %}
+
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled" onclick="while(true){alert('You can\'t vote here!!!');}"></span>
+                    <br>
+                    <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
+                    <br>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled" onclick="while(true){alert('You can\'t vote here!!!');}"></span>
+                    {%  endif %}
                 {% else %}
                     <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" onclick="window.location = '/login';"></span>
                     <br>

@@ -49,9 +49,38 @@
                     <div class="col-md-2 location pull-left">
                         <img class="icon" src="{{ asset('resources/images/location.png') }}">
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            {{ app.user.location }}
+                            <span>
+                                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ app.user.location }}<b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/">My Location</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=Bristol, UK">Bristol</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=London, UK">London</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=Manchester, UK">Manchester</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=Paris, UK">Paris</a></li>
+                                        </ul>
+                                    </li>
+                            </span>
                         {% else %}
-                            Bath, UK
+                            <span>
+                                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Bath, UK<b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/">My Location</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=Bristol, UK">Bristol</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=London, UK">London</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=Manchester, UK">Manchester</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="/?loc=Paris, UK">Paris</a></li>
+                                        </ul>
+                                    </li>
+                            </span>
+
                         {% endif %}
                     </div>
 
