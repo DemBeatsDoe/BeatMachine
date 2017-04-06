@@ -59,9 +59,24 @@
             color: #ff5500;
         }
         .playlistCollection{
+
             margin-top: 40px;
+
         }
         .playlistCollectionTitle{
+            text-align: center;
+            margin: 10px;
+            font-family: 'Lato', sans-serif;
+            font-size: 17pt;
+            font-weight: 900;
+            color: #5e5e61;
+        }
+        .settings{
+
+            margin-top: 10px;
+
+        }
+        .settingsTitle{
             text-align: center;
             margin: 40px;
 
@@ -87,7 +102,36 @@
             <div class="profileInfo"><span class="counter">{{ playlists|length }}</span>Playlists Created</div>
             <div class="profileInfo"><span class="counter">{{ count }}</span>Votes on their Playlists</div>
             <div class="profileInfo"><span class="counter">18</span>Shares on their Playlists</div>
+
+            <a href="{{ path('fos_user_change_password') }}">Back to Log in</a>
         </div>
+
+     <div class="settingsPlaylistCollection" >
+
+         <div class="settings">
+
+             <div class="settingsTitle">Settings</div>
+
+             <div style="margin-bottom: 25px" class="input-group">
+
+                 <input id="change-username" type="text" class="form-control" name="email" value="" placeholder="change email">
+
+                 <form action="www.google.com">
+                     <input type="submit" value="Update" />
+                 </form>
+
+             </div>
+
+             <!-- <a href="{{ path('fos_user_change_password') }}">Back to Log in</a>
+             -->
+             <div style="margin-bottom: 25px" class="input-group">
+                 <form action="{{ path('fos_user_change_password') }}">
+                     <input type="submit" value="Change Password" />
+                 </form>
+             </div>
+
+         </div>
+
 
         <div class="playlistCollection">
 
@@ -116,7 +160,8 @@
                 </div>
             </div>
             {% endfor %}
-
         </div>
+    </div>
+
     </div>
 {% endblock %}
