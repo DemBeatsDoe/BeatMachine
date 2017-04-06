@@ -42,4 +42,7 @@ class ProfileController extends Controller
             'songLinks' => $songLinks
         ));
     }
+
+
 }
+
