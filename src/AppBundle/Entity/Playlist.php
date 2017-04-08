@@ -220,5 +220,12 @@ class Playlist
     {
         $this->isPublic = $isPublic;
     }
+
+
+    public function addSong($id) {
+        $arr = $this->getSongList();
+        array_push($arr, $id);
+        $this->setSongList($arr);
+    }
 }
 

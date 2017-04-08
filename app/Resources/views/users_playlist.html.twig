@@ -135,54 +135,56 @@
             xxhttp.send('playlistID=' + playlistid + '&songID=' + songid + '&name=' + name);
         }
 
-        function getSongIDFromDoc(doc) {
-            var pos = doc.toString().indexOf('{"id":');
-            var pos2 = doc.find(".widgetEmbed__textInput").val();
-            window.alert(pos + "; " + pos2);
-        }
+        /* EXAMPLE RESPONSE FROM SOUNDCLOUD
+         {
+         "version": 1.0,
+         "type": "rich",
+         "provider_name": "SoundCloud",
+         "provider_url": "http://soundcloud.com",
+         "height": 400,
+         "width": "100%",
+         "title": "1.5- XO TOUR Llif3 (Produced By TM88) by LIL UZI VERT",
+         "description": "LUV IS RAGE 2 COMING SOON",
+         "thumbnail_url": "http://i1.sndcdn.com/artworks-000209741436-qfq484-t500x500.jpg",
+         "html": "\u003Ciframe width=\"100%\" height=\"400\" scrolling=\"no\" frameborder=\"no\" src=\"https://w.soundcloud.com/player/?visual=true\u0026url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F309689093\u0026show_artwork=true\"\u003E\u003C/iframe\u003E",
+         "author_name": "LIL UZI VERT",
+         "author_url": "https://soundcloud.com/liluzivert"
+         }
+         */
 
-        function getSongIDFromURL(url_unprocessed) {
+        function addSong(url) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "https://soundcloud.com/oembed?format=json&url="+url, true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send();
 
-            var url = url_unprocessed;
-            /*
-            //Sanitise url
-            if (url_unprocessed.includes('https://')) {
-                url = url_unprocessed.substr(8);
+            //Process the returned data
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    var playlistResponse = JSON.parse(xhttp.responseText);
+                    //alert(playlistResponse.author_name);
+                    var processedURL = playlistResponse.html.substr(playlistResponse.html.indexOf('tracks%2F')+9, 9); //ID is 9 long
+                    //alert(processedURL);
+                    var xxhttp = new XMLHttpRequest();
+                    xxhttp.open("POST", "/playlist/addSong", true);
+                    xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xxhttp.send('playlistID={{ playlistID }}'+'&title=' + playlistResponse.title + '&artist=' + playlistResponse.author_name + '&url=' + processedURL + '&art=' + playlistResponse.thumbnail_url + '&length=3:' + Math.floor(Math.random()*50 + 10));
+                    location.reload();
+                }
             }
-            if (url_unprocessed.includes('http://')) {
-                url = url_unprocessed.substr(7);
-            }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.responseType = 'document';
-            xhr.send();
-            xhr.onload = function(e) {
-                var doc = e.target.responseXML;
-                window.alert("Page received");
-                return getSongIDFromDoc(doc);
-            }
-            */
-
-            $.get(url, function(data) {
-                var data = $(data);
-                var title = $("#div", data).attr("title");
-
-                alert(title);
-            });
         }
 
         $('#addSongButton').click(function() {
-            getSongIDFromURL($('#songURL').val());
+            addSong($('#songURL').val());
         });
 
-        $('#songURL').on("keyPress", function(e) {
-            if(e.which === 13){
-
+        $('#songURL').keypress(function (e) {
+            if (e.which == 13) {
                 //Disable textbox to prevent multiple submit
                 $(this).attr("disabled", "disabled");
 
-                getSongIDFromURL($('#songURL').val());
+                addSong($('#songURL').val());
+                return false;
             }
         });
 
@@ -313,7 +315,7 @@
 
         <div style="margin-bottom: 10px" class="input-group">
             <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
-            <div shorterbox style='display:block; float:left;width:80%; margin-right:8px;'>
+            <div shorterbox style='display:block; float:left;width:93%; margin-right:8px;'>
                 <input id="songURL" type="url" class="form-control" name="songURL" placeholder="URL of song">
             </div>
             <button id="addSongButton" type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>

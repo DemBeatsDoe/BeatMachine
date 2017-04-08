@@ -211,4 +211,40 @@ class PlaylistController extends Controller
 
         return new JsonResponse(array('newArtist' => $song->getArtist()));
     }
+
+    /**
+     * @Route("/playlist/addSong")
+     */
+    public function addSong(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+            $title = $request->request->get('title');
+            $artist = $request->request->get('artist');
+            $art = $request->request->get('art');
+            $url = $request->request->get('url');
+            $length = $request->request->get('length');
+
+            $song = new Song();
+            $song->setArtist($artist);
+            $song->setName($title);
+            $song->setMusicLink($url);
+            $song->setArtLink($art);
+            $song->setLength($length);
+
+            $em->persist($song);
+            $em->flush();
+
+            $playlist->addSong($song->getId());
+            $em->merge($playlist);
+            $em->flush();
+            return new JsonResponse(array('success' => true));
+        }
+
+        return new JsonResponse(array('success' => false));
+    }
 }
