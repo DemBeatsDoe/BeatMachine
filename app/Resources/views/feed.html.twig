@@ -66,17 +66,24 @@
             </h>
 
             {% for url in songArt[a] %}
-                <img class="songIcon" src="{{ url }}">
+                {% set no = loop.index0%}
+                {% if no < 5 %}
+                    <img class="songIcon" src="{{ url }}">
+                {% endif %}
             {%  endfor %}
 
             <div class="playlist-info-box">
                 <button class="smallPlayPauseButton" id="playButton{{ a }}" onclick="setActivePlaylist({{ a }})"><span class="glyphicon glyphicon-play small"></span></button>
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <div class="playlist-heartButton" onclick="favouritePlaylist({{ playlist.id }})"></div>
+                    {% if playlist.id in app.user.likedPlaylists %}
+                        <div id="unfav{{ playlist.id }}" class="playlist-heartButton-clicked" onclick="unfavouritePlaylist({{ playlist.id }})"></div>
+                    {% else %}
+                        <div id="fav{{ playlist.id }}" class="playlist-heartButton" onclick="favouritePlaylist({{ playlist.id }})"></div>
+                    {% endif %}
                 {% endif %}
-                <div class="playlist-shareButton">
+                {#<div class="playlist-shareButton">
                     Share
-                </div>
+                </div>#}
             </div>
         </div>
 
@@ -119,18 +126,42 @@
             document.body.onclick = checkIfHeartClicked;
         };
 
+        var readyforclick = true;
+
         function favouritePlaylist(playlistid) {
-            xxhttp = new XMLHttpRequest();
-            xxhttp.open("POST", "/playlist/favourite", true);
-            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xxhttp.send('playlistID=' + playlistid);
+            if (readyforclick) {
+                readyforclick = false;
+                xxhttp = new XMLHttpRequest();
+                xxhttp.open("POST", "/playlist/favourite", true);
+                xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xxhttp.send('playlistID=' + playlistid);
+                document.getElementById("fav" + playlistid).className = 'playlist-heartButton-clicked';
+                document.getElementById("fav" + playlistid).onclick = unfavouritePlaylist(playlistid);
+                document.getElementById("fav" + playlistid).id = 'unfav' + playlistid;
+                xxhttp.onreadystatechange = function () {
+                    if (xhttp.readyState == 4 && xhttp.status == 200) {
+                        readyforclick = true;
+                    }
+                }
+            }
         }
 
         function unfavouritePlaylist(playlistid) {
-            xxhttp = new XMLHttpRequest();
-            xxhttp.open("POST", "/playlist/unfavourite", true);
-            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xxhttp.send('playlistID=' + playlistid);
+            if (readyforclick) {
+                readyforclick = false;
+                xxhttp = new XMLHttpRequest();
+                xxhttp.open("POST", "/playlist/unfavourite", true);
+                xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xxhttp.send('playlistID=' + playlistid);
+                document.getElementById("unfav" + playlistid).className = 'playlist-heartButton';
+                document.getElementById("unfav" + playlistid).onclick = favouritePlaylist(playlistid);
+                document.getElementById("unfav" + playlistid).id = 'fav' + playlistid;
+                xxhttp.onreadystatechange = function () {
+                    if (xhttp.readyState == 4 && xhttp.status == 200) {
+                        readyforclick = true;
+                    }
+                }
+            }
         }
 
         function vote(playlistid, direction, textid, aboveid, belowid) {
@@ -223,19 +254,5 @@
             newPlaylist.innerHTML += "\r\n\t\t\t\r\n\t\t\t<div class=\"playlist-info-box\">\r\n\t\t\t\t<div class=\"playlist-heartButton\"><\/div>\r\n\t\t\t\t<div class=\"playlist-likeCount\">\r\n\t\t\t\t" + numLikes + "\r\n\t\t\t\t<\/div>\r\n\t\t\t\t<div class=\"playlist-shareButton\">\r\n\t\t\t\tShare\r\n\t\t\t\t<\/div>\r\n\t\t\t<\/div>";
             document.getElementsByClassName("feed")[0].appendChild(newPlaylist);
         }
-
-        function checkIfHeartClicked(e){
-            if (window.event) {
-
-                e = event.srcElement;
-            }
-            else {
-                e = e.target;
-            }
-
-            if (e.className && e.className.indexOf("playlist-heartButton") != -1) {
-                e.className = "playlist-heartButton-clicked";
-            }
-        };
     </script>
 {% endblock %}

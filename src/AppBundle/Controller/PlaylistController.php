@@ -297,12 +297,14 @@ class PlaylistController extends Controller
 
         $user = $em->getRepository('AppBundle:User')->find($this->getUser());;
         if (!is_null($playlist) && !is_null($user)) {
-            $user->addLikedPlaylist($playlistID);
-            $em->merge($user);
-            $em->flush();
+            if (!in_array($playlistID, $user->getLikedPlaylists())) {
+                $user->addLikedPlaylist($playlistID);
+                $em->merge($user);
+                $em->flush();
+            }
         }
 
-        return new JsonResponse();
+        return new JsonResponse(array());
     }
 
     /**
@@ -321,6 +323,6 @@ class PlaylistController extends Controller
             $em->flush();
         }
 
-        return new JsonResponse();
+        return new JsonResponse(array());
     }
 }
