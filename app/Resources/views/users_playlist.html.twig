@@ -193,7 +193,13 @@
             $(".blur").css("height", $(".clickMe").height());
         });
 
-
+        $('#deleteButton').click(function () {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/delete", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }});
+            window.location.replace("/");
+        });
 
         $('.clickMe').click(function () {
             "use strict";
@@ -223,6 +229,14 @@
                 changeSongArtist({{ playlistID }}, myid[myid.length - 1], $(this).val())
             }
         });
+
+        function deleteSong(index, element) {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/removeSong", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }} + '&index=' + index);
+            element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
+        }
     </script>
 {% endblock %}
 
@@ -303,6 +317,11 @@
                         {% endif %}
 
                     </td>
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                        <td>
+                            <button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="deleteSong({{ a }}, this);"></button>
+                        </td>
+                    {% endif %}
                 </tr>
             </div>
         {% endfor %}
@@ -313,12 +332,19 @@
 
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
 
-        <div style="margin-bottom: 10px" class="input-group">
+        <div style="margin-bottom: 10px;" class="input-group">
             <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
-            <div shorterbox style='display:block; float:left;width:93%; margin-right:8px;'>
+            <div shorterbox style='display:block; float:left; width:90%; margin-right:8px;'>
                 <input id="songURL" type="url" class="form-control" name="songURL" placeholder="URL of song">
             </div>
             <button id="addSongButton" type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>
+        </div>
+    {% endif %}
+
+
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable%}
+        <div class="deletePlaylistButton" style="text-align: center; padding-top: 100px;">
+            <button id="deleteButton" class="btn btn-danger glyphicon glyphicon-trash">Delete playlist</button>
         </div>
     {% endif %}
 {% endblock %}

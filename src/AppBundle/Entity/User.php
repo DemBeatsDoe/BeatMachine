@@ -24,10 +24,37 @@ class User extends \FOS\UserBundle\Model\User
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="userPlaylists", type="json_array", nullable=true)
+     * @ORM\Column(name="likedPlaylists", type="json_array", nullable=true)
      */
-    private $playlistIDs;
+    private $likedPlaylists;
+
+    /**
+     * @return mixed
+     */
+    public function getLikedPlaylists()
+    {
+        return $this->likedPlaylists;
+    }
+
+    /**
+     * @param mixed $likedPlaylists
+     */
+    public function setLikedPlaylists($likedPlaylists)
+    {
+        $this->likedPlaylists = $likedPlaylists;
+    }
+
+    public function addLikedPlaylist($id) {
+        $arr = $this->getLikedPlaylists();
+        array_push($arr, $id);
+        $this->setLikedPlaylists($arr);
+    }
+
+    public function removeLikedPlaylist($id) {
+        $arr = $this->getLikedPlaylists();
+        unset($arr[array_search($id, $arr)]);
+        $this->setLikedPlaylists(array_values($arr));
+    }
 
     /**
      * @var array

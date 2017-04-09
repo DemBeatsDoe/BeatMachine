@@ -213,6 +213,24 @@ class PlaylistController extends Controller
     }
 
     /**
+     * @Route("/playlist/delete")
+     */
+    public function delete(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+            $em->remove($playlist);
+            $em->flush();
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
      * @Route("/playlist/addSong")
      */
     public function addSong(Request $request) {
@@ -232,7 +250,7 @@ class PlaylistController extends Controller
             $song = new Song();
             $song->setArtist($artist);
             $song->setName($title);
-            $song->setMusicLink($url);
+            $song->setMusicLink($u+ '&songID=' + songid + '&name=' + namerl);
             $song->setArtLink($art);
             $song->setLength($length);
 
@@ -246,5 +264,63 @@ class PlaylistController extends Controller
         }
 
         return new JsonResponse(array('success' => false));
+    }
+
+    /**
+     * @Route("/playlist/removeSong")
+     */
+    public function removeSong(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+        $index = $request->request->get('index');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+            $playlist->removeSong($index);
+            $em->merge($playlist);
+            $em->flush();
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Route("/playlist/favourite")
+     */
+    public function favouritePlaylist(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $em->getRepository('AppBundle:User')->find($this->getUser());;
+        if (!is_null($playlist) && !is_null($user)) {
+            $user->addLikedPlaylist($playlistID);
+            $em->merge($user);
+            $em->flush();
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Route("/playlist/unfavourite")
+     */
+    public function unfavouritePlaylist(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $em->getRepository('AppBundle:User')->find($this->getUser());;
+        if (!is_null($playlist) && !is_null($user)) {
+            $user->removeLikedPlaylist($playlistID);
+            $em->merge($user);
+            $em->flush();
+        }
+
+        return new JsonResponse();
     }
 }

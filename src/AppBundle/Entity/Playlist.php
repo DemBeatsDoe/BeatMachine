@@ -227,5 +227,11 @@ class Playlist
         array_push($arr, $id);
         $this->setSongList($arr);
     }
+
+    public function removeSong($index) {
+        $arr = $this->getSongList();
+        unset($arr[$index]);
+        $this->setSongList(array_values($arr));
+    }
 }
 

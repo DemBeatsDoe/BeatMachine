@@ -40,7 +40,15 @@ class FeedController extends Controller
         if($mode == "new"){
             $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('id' => 'DESC'), 10);
         }
-        else{$this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
+        else if ($mode == "favourites") {
+            $ids = $em->getRepository('AppBundle:User')->find($this->getUser())->getLikedPlaylists();
+            $array = array();
+            foreach ($ids as $i) {
+                array_push($array, $em->getRepository('AppBundle:Playlist')->find($i));
+            }
+            $this->playlists = $array;
+        } else {
+            $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
         }
 
         //Get array of song art links for each playlist

@@ -10,6 +10,9 @@
         <div class="modeSelector">
             <a class="modeItem {% if mode=='top' %}modeItemActive{% endif %}"  href="./?mode=top">Popular</a>
             <a class="modeItem {% if mode=='new' %}modeItemActive{% endif %}" href="./?mode=new">New Releases</a>
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                <a class="modeItem {% if mode=='favourites' %}modeItemActive{% endif %}" href="./?mode=favourites">Favourites</a>
+            {% endif %}
         </div>
         <div class="locationLabel">Playlists from {{ location }}</div>
 
@@ -68,7 +71,9 @@
 
             <div class="playlist-info-box">
                 <button class="smallPlayPauseButton" id="playButton{{ a }}" onclick="setActivePlaylist({{ a }})"><span class="glyphicon glyphicon-play small"></span></button>
-                <div class="playlist-heartButton"></div>
+                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    <div class="playlist-heartButton" onclick="favouritePlaylist({{ playlist.id }})"></div>
+                {% endif %}
                 <div class="playlist-shareButton">
                     Share
                 </div>
@@ -113,6 +118,20 @@
             requestNextPlaylist();
             document.body.onclick = checkIfHeartClicked;
         };
+
+        function favouritePlaylist(playlistid) {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/favourite", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + playlistid);
+        }
+
+        function unfavouritePlaylist(playlistid) {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/unfavourite", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + playlistid);
+        }
 
         function vote(playlistid, direction, textid, aboveid, belowid) {
             xxhttp = new XMLHttpRequest();
