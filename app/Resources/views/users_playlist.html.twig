@@ -278,7 +278,7 @@
         }
 
         function copyToClipboard(text) {
-            alert("Copied to clipboard: " + text);
+            window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
         }
     </script>
 {% endblock %}

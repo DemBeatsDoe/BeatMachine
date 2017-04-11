@@ -37,7 +37,7 @@ class ShareController extends Controller
                 $em->merge($playlist);
                 $em->flush();
             }
-            return new JsonResponse(array('success' => true, 'link' => '/share/'+$code));
+            return new JsonResponse(array('success' => true, 'link' => '/share/'.$code));
         }
 
         return new JsonResponse(array('success' => false));
@@ -54,7 +54,7 @@ class ShareController extends Controller
             //Got our playlist to render
             $r = new Request();
             $r->query->set('id', $playlist->getID());
-            return $this->forward('AppBundle:Playlist:index', array('request' => $r));
+            return $this->forward('AppBundle:Playlist:index', array('request' => $r, 'editable' => false));
         }
 
         return $this->render('error.html.twig', array('error' => 'Share does not exist'));
