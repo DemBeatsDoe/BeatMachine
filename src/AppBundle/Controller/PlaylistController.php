@@ -53,7 +53,9 @@ class PlaylistController extends Controller
             'authorID' => $playlist->getUserID(),
             'songs' => $songs,
             'collaborators' => $collaborators,
-            'editable' => $editable
+            'editMode' => $editable,
+            'canUserEdit' => $this->canUserEdit($playlistID, $this->getUser()->getID()),
+            'public' => $playlist->getIsPublic()
         ));
     }
 
@@ -138,13 +140,47 @@ class PlaylistController extends Controller
         return $this->render('create_playlist.html.twig');
     }
 
+    private function canUserEdit($playlistID, $userID) {
+        $em = $this->getDoctrine()->getManager();
+
+        //Get playlist + user data from DB
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        //Check user ID
+
+        if (is_null($userID)) { //Not logged in
+            if ($playlist->getIsPublic()) {
+                return false;
+            } else {
+                return true; //Editable with link
+            }
+        }
+        if ($userID == $playlist->getUserID()) return true; //Owner
+        if (in_array($userID, $playlist->getCollaborators())) return true; //Collaborator
+    }
+
     /**
      * @Route("/playlist/edit")
      */
     public function editable(Request $request)
     {
-        return $this->indexAction($request, true);
+        //Store the playlist id
+        $playlistID = $request->query->get('id');
+        if (is_null($playlistID)) return $this->render('error.html.twig', array('error' => 'No playlist ID specified'));
+
+        $em = $this->getDoctrine()->getManager();
+
+        //Get playlist + user data from DB
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+        if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist: ".$playlistID));
+
+        //Get current user ID
+        $userID = $this->getUser()->getID();
+
+        return $this->indexAction($request, $this->canUserEdit($playlistID, $userID));
     }
+
+
 
 
     /**
@@ -209,10 +245,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        $user = $this->getUser();
-        if ($user->getID() == $playlist->getUserID()) {
-
-
+        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
             $playlist->setName($name);
             $em->merge($playlist);
             $em->flush();
@@ -232,8 +265,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        $user = $this->getUser();
-        if ($user->getID() == $playlist->getUserID()) {
+        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
             $song = $em->getRepository('AppBundle:Song')->find($playlist->getSongList()[$songIndex]);
 
             $song->setName($name);
@@ -256,8 +288,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        $user = $this->getUser();
-        if ($user->getID() == $playlist->getUserID()) {
+        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
             $song = $em->getRepository('AppBundle:Song')->find($playlist->getSongList()[$songIndex]);
 
             $song->setArtist($name);
@@ -267,6 +298,31 @@ class PlaylistController extends Controller
         }
 
         return new JsonResponse(array('newArtist' => $song->getArtist()));
+    }
+
+    /**
+     * @Route("/playlist/togglePrivate")
+     */
+    public function togglePrivate(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $this->getUser();
+        if ($user->getID() == $playlist->getUserID()) {
+            if ($playlist->getIsPublic()) {
+                $playlist->setIsPublic(false);
+            } else {
+                $playlist->setIsPublic(true);
+            }
+
+            $em->merge($playlist);
+            $em->flush();
+            return new JsonResponse(array('success' => true));
+        }
+
+        return new JsonResponse(array('success' => false));
     }
 
     /**
@@ -296,8 +352,8 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        $user = $this->getUser();
-        if ($user->getID() == $playlist->getUserID()) {
+        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+
             $url = $request->request->get('url');
             $song = $em->getRepository('AppBundle:Song')->findOneBy(array('musicLink' => $url));
             if (is_null($song)) {
@@ -337,8 +393,8 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        $user = $this->getUser();
-        if ($user->getID() == $playlist->getUserID()) {
+        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+
             $playlist->removeSong($songID);
             $em->merge($playlist);
             $em->flush();

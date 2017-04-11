@@ -135,6 +135,20 @@
             xxhttp.send('playlistID=' + playlistid + '&songID=' + songid + '&name=' + name);
         }
 
+        function togglePrivate() {
+            xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/togglePrivate", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }});
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) location.reload();
+                }
+            }
+        }
+
         /* EXAMPLE RESPONSE FROM SOUNDCLOUD
          {
          "version": 1.0,
@@ -298,27 +312,23 @@
             </ul>
         </span>
 
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID  and editable %}
+        {% if editMode %}
             <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
             <input value="" type="text" id="textBox1" name="textBox1" class="blur playlistTitle" hidden>
         {% else %}
             <div class="playlistTitle">{{ playlistName }}</div>
-
         {% endif %}
 
         <div class="playlistAuthor"><a href="/profile?id={{ authorID }}">Created by {{ playlistAuthor }}</a></div>
 
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
-
-
-            {% if editable %}
+        {% if canUserEdit %}
+            {% if editMode %}
                 <span id="editbutton">
                     <a href="/playlist?id={{ playlistID }}">
                         <button type="button" class="btn btn-default btn-md">
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Done
                         </button>
                     </a>
-
                 </span>
             {% else %}
                 <span id="editbutton">
@@ -353,7 +363,7 @@
                 <tr id="{{ a }}" onclick="playBar.playSongAt({{ a }});">
                     <td>{{ song.length }}</td>
                     <td>
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                        {% if editMode %}
                             <span class="clickMe label label-info songName"
                                   for="songNameTextbox{{ a }}">{{ song.name }}</span>
                             <input value="" type="text" id="songNameTextbox{{ a }}" name="songNameTextbox{{ a }}"
@@ -363,7 +373,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                        {% if editMode %}
                             <span class="clickMe label label-info songArtist"
                                   for="songArtistTextbox{{ a }}">{{ song.artist }}</span>
                             <input value="" type="text" id="songArtistTextbox{{ a }}" name="songArtistTextbox{{ a }}"
@@ -373,7 +383,7 @@
                         {% endif %}
 
                     </td>
-                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
+                    {% if editMode %}
                         <td>
                             <button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="deleteSong({{ song.id }}, this);"></button>
                         </td>
@@ -386,8 +396,7 @@
 
     </table>
 
-    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
-
+    {% if canUserEdit %}
         <div style="margin-bottom: 10px;" class="input-group">
             <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
             <div shorterbox style='display:block; float:left; width:90%; margin-right:8px;'>
@@ -398,9 +407,16 @@
     {% endif %}
 
 
-    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable%}
+    {% if editMode and is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
         <div class="deletePlaylistButton" style="text-align: center; padding-top: 100px;">
             <button id="deleteButton" class="btn btn-danger glyphicon glyphicon-trash">Delete playlist</button>
+            {% if public %}
+                <button id="makePrivateButton" class="btn btn-warning glyphicon glyphicon-eye-close" onclick="togglePrivate();">Make private</button>
+            {% else %}
+                <button id="makePublicButton" class="btn btn-info glyphicon glyphicon-eye-open
+" onclick="togglePrivate();">Make public</button>
+            {% endif %}
         </div>
+
     {% endif %}
 {% endblock %}
