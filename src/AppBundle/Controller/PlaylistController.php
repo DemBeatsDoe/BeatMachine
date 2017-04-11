@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\AppBundle;
 use AppBundle\Entity\Song;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -12,12 +13,13 @@ use Symfony\Component\HttpFoundation\Request;
 class PlaylistController extends Controller
 {
     /**
-     * @Route("/playlist")
+     * @Route("/playlist", defaults={"editable": false})
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, $editable)
     {
         //Store the playlist id
         $playlistID = $request->query->get('id');
+        if (is_null($playlistID)) return $this->render('error.html.twig', array('error' => 'No playlist ID specified'));
 
         $em = $this->getDoctrine()->getManager();
 
@@ -35,6 +37,14 @@ class PlaylistController extends Controller
             array_push($songs, $em->getRepository('AppBundle:Song')->find($i));
         }
 
+        //Get collaborators as user objects
+        $cids = $playlist->getCollaborators();
+        $collaborators = array();
+        foreach ($cids as $c) {
+            $u = $em->getRepository('AppBundle:User')->find($c);
+            if (!is_null($u)) array_push($collaborators, $u);
+        }
+
         return $this->render('users_playlist.html.twig', array(
             'playlistArt' => $playlist->getArtLink(),
             'playlistID' => $playlistID,
@@ -42,10 +52,84 @@ class PlaylistController extends Controller
             'playlistAuthor' => $user->getUsername(),
             'authorID' => $playlist->getUserID(),
             'songs' => $songs,
-            'editable' => false
+            'collaborators' => $collaborators,
+            'editable' => $editable
         ));
     }
 
+    /**
+     * @Route("/playlist/edit/collaborators")
+     */
+    public function playlistEditCollaborators(Request $request) {
+        //Store the playlist id
+        $playlistID = $request->query->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+
+        //Get playlist + user data from DB
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+        if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist: ".$playlistID));
+
+        //Get collab array
+        $collaborators = array();
+        foreach ($playlist->getCollaborators() as $i) {
+            $user = $em->getRepository('AppBundle:User')->find($i);
+            if (!is_null($user)) array_push($collaborators, $user);
+        }
+
+        return $this->render('playlist_edit_collaborators.html.twig', array('playlist' => $playlist, 'collaborators' => $collaborators));
+    }
+
+    /**
+     * @Route("/playlist/edit/addCollaborator")
+     */
+    public function addCollaborator(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $em->getRepository('AppBundle:User')->find($this->getUser());;
+        if (!is_null($playlist) && !is_null($user)) {
+            if ($playlist->getUserID() == $user->getId()) {
+                //Find user based on input from form
+                $input = $request->request->get('input');
+                $collaborator = $em->getRepository('AppBundle:User')->findOneBy(array('username'=>$input));
+                if (is_null($collaborator)) $collaborator = $em->getRepository('AppBundle:User')->findOneBy(array('email'=>$input));
+                if (!is_null($collaborator)) {
+                    if (array_search($collaborator->getId(), $playlist->getCollaborators()) == false) { //Check it isn't already in the array
+                        $playlist->addCollaborator($collaborator->getId());
+                        $em->merge($playlist);
+                        $em->flush();
+                        return new JsonResponse(array('success' => true, 'username' => $collaborator->getUsername(), 'userID' => $collaborator->getId()));
+                    }
+                }
+            }
+        }
+        return new JsonResponse(array('success' => false));
+    }
+
+    /**
+     * @Route("/playlist/edit/removeCollaborator")
+     */
+    public function removeCollaborator(Request $request) {
+        $playlistID = $request->request->get('playlistID');
+
+        $em = $this->getDoctrine()->getManager();
+        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
+
+        $user = $em->getRepository('AppBundle:User')->find($this->getUser());;
+        if (!is_null($playlist) && !is_null($user)) {
+            if ($playlist->getUserID() == $user->getId()) {
+                //Remove collaborator from playlist
+                $playlist->removeCollaborator($request->request->get('collaboratorID'));
+                $em->merge($playlist);
+                $em->flush();
+                return new JsonResponse(array('success' => true));
+            }
+        }
+        return new JsonResponse(array('success' => false));
+    }
 
     /**
      * @Route("/playlist/create")
@@ -59,34 +143,7 @@ class PlaylistController extends Controller
      */
     public function editable(Request $request)
     {
-        //Store the playlist id
-        $playlistID = $request->query->get('id');
-
-        $em = $this->getDoctrine()->getManager();
-
-        //Get playlist + user data from DB
-        $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
-        if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist: ".$playlistID));
-
-        $user = $em->getRepository('AppBundle:User')->find($playlist->getUserId());
-        if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist user: ".$playlist->getUserID()));
-
-        //Get array of song entities from array of song IDs
-        $songs = array();
-        $songList = $playlist->getSongList();
-        foreach($songList as $i) {
-            array_push($songs, $em->getRepository('AppBundle:Song')->find($i));
-        }
-
-        return $this->render('users_playlist.html.twig', array(
-            'playlistArt' => $playlist->getArtLink(),
-            'playlistID' => $playlistID,
-            'playlistName' => $playlist->getName(),
-            'playlistAuthor' => $user->getUsername(),
-            'authorID' => $playlist->getUserID(),
-            'songs' => $songs,
-            'editable' => true
-        ));
+        return $this->indexAction($request, true);
     }
 
 
@@ -241,29 +298,33 @@ class PlaylistController extends Controller
 
         $user = $this->getUser();
         if ($user->getID() == $playlist->getUserID()) {
-            $title = $request->request->get('title');
-            $artist = $request->request->get('artist');
-            $art = $request->request->get('art');
             $url = $request->request->get('url');
-            $length = $request->request->get('length');
+            $song = $em->getRepository('AppBundle:Song')->findOneBy(array('musicLink' => $url));
+            if (is_null($song)) {
+                $title = $request->request->get('title');
+                $artist = $request->request->get('artist');
+                $art = $request->request->get('art');
+                $length = $request->request->get('length');
 
-            $song = new Song();
-            $song->setArtist($artist);
-            $song->setName($title);
-            $song->setMusicLink($u+ '&songID=' + songid + '&name=' + namerl);
-            $song->setArtLink($art);
-            $song->setLength($length);
+                $song = new Song();
+                $song->setArtist($artist);
+                $song->setName($title);
+                $song->setMusicLink($url);
+                $song->setArtLink($art);
+                $song->setLength($length);
 
-            $em->persist($song);
-            $em->flush();
+                $em->persist($song);
+                $em->flush();
+            }
 
+            if (array_search($song->getId(), $playlist->getSongList()) != false) return new JsonResponse(array('success' => false, 'error' => 'Song already in playlist'));
             $playlist->addSong($song->getId());
             $em->merge($playlist);
             $em->flush();
-            return new JsonResponse(array('success' => true));
+            return new JsonResponse(array('success' => true, 'id' => $song->getId(), 'title' => $song->getName(), 'artist' => $song->getArtist(), 'length' => $song->getLength()));
         }
 
-        return new JsonResponse(array('success' => false));
+        return new JsonResponse(array('success' => false, 'error' => 'Unable to add song'));
     }
 
     /**
@@ -271,19 +332,20 @@ class PlaylistController extends Controller
      */
     public function removeSong(Request $request) {
         $playlistID = $request->request->get('playlistID');
-        $index = $request->request->get('index');
+        $songID = $request->request->get('songID');
 
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
         $user = $this->getUser();
         if ($user->getID() == $playlist->getUserID()) {
-            $playlist->removeSong($index);
+            $playlist->removeSong($songID);
             $em->merge($playlist);
             $em->flush();
+            return new JsonResponse(array('success' => true));
         }
 
-        return new JsonResponse();
+        return new JsonResponse(array('success' => false));
     }
 
     /**

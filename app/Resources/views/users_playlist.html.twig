@@ -162,14 +162,28 @@
             xhttp.onreadystatechange = function () {
                 if (xhttp.readyState == 4 && xhttp.status == 200) {
                     var playlistResponse = JSON.parse(xhttp.responseText);
-                    //alert(playlistResponse.author_name);
                     var processedURL = playlistResponse.html.substr(playlistResponse.html.indexOf('tracks%2F')+9, 9); //ID is 9 long
-                    //alert(processedURL);
                     var xxhttp = new XMLHttpRequest();
                     xxhttp.open("POST", "/playlist/addSong", true);
                     xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     xxhttp.send('playlistID={{ playlistID }}'+'&title=' + playlistResponse.title + '&artist=' + playlistResponse.author_name + '&url=' + processedURL + '&art=' + playlistResponse.thumbnail_url + '&length=3:' + Math.floor(Math.random()*50 + 10));
-                    location.reload();
+                    xxhttp.onreadystatechange = function () {
+                        if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                            var r = JSON.parse(xxhttp.responseText);
+                            if (r.success) {
+                                //Succeeded
+                                //appendSong(r.id, r.title, r.artist, r.length);
+                                location.reload();
+                            } else {
+                                document.getElementById('songURL').value = "";
+                                document.getElementById('songURL').placeholder = r.error;
+                            }
+                        }
+                    }
+                } else {
+                    //Failed to parse link
+                    document.getElementById('songURL').value = "";
+                    document.getElementById('songURL').placeholder = "Couldn't parse link";
                 }
             }
         }
@@ -181,7 +195,7 @@
         $('#songURL').keypress(function (e) {
             if (e.which == 13) {
                 //Disable textbox to prevent multiple submit
-                $(this).attr("disabled", "disabled");
+                //$(this).attr("disabled", "disabled");
 
                 addSong($('#songURL').val());
                 return false;
@@ -230,12 +244,41 @@
             }
         });
 
-        function deleteSong(index, element) {
+        function deleteSong(id, element) {
             var xxhttp = new XMLHttpRequest();
             xxhttp.open("POST", "/playlist/removeSong", true);
             xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xxhttp.send('playlistID=' + {{ playlistID }} + '&index=' + index);
-            element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
+            xxhttp.send('playlistID=' + {{ playlistID }} + '&songID=' + id);
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) {
+                        element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
+                    }
+                }
+            }
+        }
+
+        function getShareLink() {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/share/getLink", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }});
+
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) {
+                        copyToClipboard(response.link);
+                    }
+                }
+            }
+        }
+
+        function copyToClipboard(text) {
+            window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
         }
     </script>
 {% endblock %}
@@ -243,6 +286,17 @@
 {% block pagebody %}
     <div class="playlistHeader">
         <img class="playlistArt" src="{{ playlistArt }}">
+
+
+        <span class="collaboratorIcons pull-right">
+            {#                <a href="/playlist/edit/collaborators?id={{ playlistID }}">#}
+            <h4 class="glyphicon glyphicon-edit">Collaborators</h4>
+            <ul style="list-style-type: none; text-align: right;">
+                {% for c in collaborators %}
+                    <li><a href="/profile?id={{ c.id }}">{{ c.username }}</a></li>
+                {% endfor %}
+            </ul>
+        </span>
 
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID  and editable %}
             <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
@@ -276,8 +330,10 @@
                 </span>
             {% endif %}
 
-
         {% endif %}
+        <span id="linkButton">
+                <button onclick="getShareLink();" type="button" class="btn btn-default btn-warning btn-md glyphicon glyphicon-link"></button>
+            </span>
     </div>
 
     <table class="songsTable">
@@ -319,7 +375,7 @@
                     </td>
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID and editable %}
                         <td>
-                            <button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="deleteSong({{ a }}, this);"></button>
+                            <button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="deleteSong({{ song.id }}, this);"></button>
                         </td>
                     {% endif %}
                 </tr>

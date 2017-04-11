@@ -2,7 +2,7 @@
 <html>
 
     <head>
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="{{ asset('resources/JavaScript/jquery.min.js') }}"></script>
         <script>
             function changePage(newURL){
                 history.pushState(null, null, newURL);
@@ -14,7 +14,7 @@
             }
         </script>
 
-        <script type="text/javascript" src="http://w.soundcloud.com/player/api.js"></script>
+        <script type="text/javascript" src="{{ asset('resources/JavaScript/sc_api.js') }}"></script>
 
         <script type="text/javascript">
             var widget1;
