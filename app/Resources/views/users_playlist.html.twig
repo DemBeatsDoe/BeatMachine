@@ -187,11 +187,13 @@
                         var author = data.items[0].snippet.channelTitle;
                         var duration = data.items[0].contentDetails.duration;
                         var durationConverted = convertToMinSec(duration);
-                        var durationString = durationConverted.minutes+":"+durationConverted.seconds;
+                        var durationSec = durationConverted.seconds;
+                        if(durationSec.length == 1){durationSec = "0"+durationSec;}
+                        var durationString = durationConverted.minutes+":"+durationSec;
 
                         sendNewSongToDB(title,  author , "YT:"+processedURL, art, durationString);
                     }
-                    else
+                    else{
                         //Failed to parse link
                         document.getElementById('songURL').value = "";
                         document.getElementById('songURL').placeholder = "Couldn't parse link";
