@@ -270,15 +270,17 @@ class Playlist
 
     public function addSong($id)
     {
-        $arr = $this->getSongList();
-        array_push($arr, $id);
-        $this->setSongList($arr);
+        if (array_search($id, $this->songList) == false) {
+            $arr = $this->getSongList();
+            array_push($arr, $id);
+            $this->setSongList($arr);
+        }
     }
 
-    public function removeSong($index)
+    public function removeSong($id)
     {
         $arr = $this->getSongList();
-        unset($arr[$index]);
+        unset($arr[array_search($id, $arr)]);
         $this->setSongList(array_values($arr));
     }
 
