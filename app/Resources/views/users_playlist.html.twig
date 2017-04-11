@@ -237,12 +237,44 @@
             xxhttp.send('playlistID=' + {{ playlistID }} + '&index=' + index);
             element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
         }
+
+        function getShareLink() {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/share/getLink", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }});
+
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) {
+                        copyToClipboard(response.link);
+                    }
+                }
+            }
+        }
+
+        function copyToClipboard(text) {
+            alert("Copied to clipboard: " + text);
+        }
     </script>
 {% endblock %}
 
 {% block pagebody %}
     <div class="playlistHeader">
         <img class="playlistArt" src="{{ playlistArt }}">
+
+
+        <span class="collaboratorIcons pull-right">
+            {#                <a href="/playlist/edit/collaborators?id={{ playlistID }}">#}
+            <h4 class="glyphicon glyphicon-edit">Collaborators</h4>
+            <ul style="list-style-type: none; text-align: right;">
+                {% for c in collaborators %}
+                    <li><a href="/profile?id={{ c.id }}">{{ c.username }}</a></li>
+                {% endfor %}
+            </ul>
+        </span>
 
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID  and editable %}
             <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
@@ -275,9 +307,11 @@
                     </a>
                 </span>
             {% endif %}
-
-
         {% endif %}
+
+        <span id="linkButton">
+                <button onclick="getShareLink();" type="button" class="btn btn-default btn-warning btn-md glyphicon glyphicon-link"></button>
+            </span>
     </div>
 
     <table class="songsTable">

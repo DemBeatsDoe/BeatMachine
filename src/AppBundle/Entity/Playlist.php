@@ -22,6 +22,29 @@ class Playlist
     private $id;
 
     /**
+     * @return string
+     */
+    public function getShareCode(): string
+    {
+        return $this->shareCode;
+    }
+
+    /**
+     * @param string $shareCode
+     */
+    public function setShareCode(string $shareCode)
+    {
+        $this->shareCode = $shareCode;
+    }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shareCode", type="string", length=12)
+     */
+    private $shareCode;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="isPublic", type="boolean")
@@ -85,6 +108,29 @@ class Playlist
      * @ORM\Column(name="songList", type="json_array")
      */
     private $songList;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="collaborators", type="json_array")
+     */
+    private $collaborators;
+
+    /**
+     * @return array
+     */
+    public function getCollaborators(): array
+    {
+        return $this->collaborators;
+    }
+
+    /**
+     * @param array $collaborators
+     */
+    public function setCollaborators(array $collaborators)
+    {
+        $this->collaborators = $collaborators;
+    }
 
     /**
      * Get id
@@ -202,7 +248,7 @@ class Playlist
 
     public function addVotes($n)
     {
-        $this->votes+=$n;
+        $this->votes += $n;
     }
 
     /**
@@ -222,16 +268,32 @@ class Playlist
     }
 
 
-    public function addSong($id) {
+    public function addSong($id)
+    {
         $arr = $this->getSongList();
         array_push($arr, $id);
         $this->setSongList($arr);
     }
 
-    public function removeSong($index) {
+    public function removeSong($index)
+    {
         $arr = $this->getSongList();
         unset($arr[$index]);
         $this->setSongList(array_values($arr));
+    }
+
+    public function addCollaborator($id)
+    {
+        $arr = $this->collaborators;
+        array_push($arr, $id);
+        $this->collaborators = $arr;
+    }
+
+    public function removeCollaborator($id)
+    {
+        $arr = $this->collaborators;
+        unset($arr[array_search($id, $arr)]);
+        $this->collaborators = array_values($arr);
     }
 }
 

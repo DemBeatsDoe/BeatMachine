@@ -24,7 +24,14 @@ class ProfileController extends Controller
         if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find user: ".$userID));
 
         //Get user's playlists
-        $userPlaylists = $em->getRepository('AppBundle:Playlist')->findBy(array('userID' => $userID), array('id'=>'ASC'));
+        //$userPlaylists = $em->getRepository('AppBundle:Playlist')->findBy(array('userID' => $userID), array('id'=>'ASC'));
+        $allPlaylists = $em->getRepository('AppBundle:Playlist')->findAll(array('id'=>'ASC'));
+        $userPlaylists = array();
+        foreach ($allPlaylists as $p) {
+            if (array_search($userID, $p->getCollaborators()) != false || $userID == $p->getUserID()) {
+                array_push($userPlaylists, $p);
+            }
+        }
 
         //Get array of song art links for each playlist
         $songLinks = array();

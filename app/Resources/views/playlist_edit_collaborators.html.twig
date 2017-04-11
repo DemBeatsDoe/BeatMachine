@@ -1,0 +1,92 @@
+{% extends 'page.html.twig' %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        function removeCollaborator(id, element) {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/edit/removeCollaborator", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlist.id }} + '&collaboratorID=' + id);
+
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) { //Remove was successful
+                        element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
+                    }
+                }
+            }
+        }
+
+        function addCollaborator(input) {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/edit/addCollaborator", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlist.id }} + '&input=' + input);
+
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) { //Add was successful
+                        //Add new user to list
+                        appendCollaborator(response.username, response.userID);
+                    }
+                }
+            }
+        }
+
+        function appendCollaborator(username, userID) {
+            var tr = document.createElement("tr");
+            var name = document.createElement("td");
+            var removeButton = document.createElement("td");
+            tr.appendChild(name);
+            tr.appendChild(removeButton);
+
+            name.innerHTML = '<a href="/profile?id=' + userID + '">' + username + '</a>';
+            removeButton.innerHTML = '<button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="removeCollaborator(' + userID + ', this);"></button>'
+
+            document.getElementById('collaboratorTable').appendChild(tr);
+        }
+
+        $('#addSongButton').click(function () {
+            addCollaborator($('#songURL').val());
+        });
+
+        $('#songURL').keypress(function (e) { //On enter
+            if (e.which == 13) {
+                addCollaborator($('#songURL').val());
+                return false;
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block pagebody %}
+    <a href="/playlist?id={{ playlist.id }}">
+        <span class="glyphicon glyphicon-arrow-left" id="goback">
+            <h2>{{ playlist.name }}</h2>
+        </span>
+    </a>
+
+    <span class="collaborators">
+        <h3>Collaborators</h3>
+        <table id="collaboratorTable">
+            {% for c in collaborators %}
+                <tr>
+                    <td><a href="/profile?id={{ c.id }}">{{ c.username }}</a></td>
+                    <td><button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="removeCollaborator({{ c.id }}, this);"></button></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div style="margin-bottom: 10px;" class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
+            <div shorterbox style='display:block; float:left; width:90%; margin-right:8px;'>
+                <input id="songURL" type="url" class="form-control" name="songURL" placeholder="Add Collaborator by Username / Email Address">
+            </div>
+            <button id="addSongButton" type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>
+        </div>
+    </span>
+{% endblock %}

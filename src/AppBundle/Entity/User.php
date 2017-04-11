@@ -126,22 +126,6 @@ class User extends \FOS\UserBundle\Model\User
     }
 
     /**
-     * @return mixed
-     */
-    public function getPlaylistIDs()
-    {
-        return $this->playlistIDs;
-    }
-
-    /**
-     * @param mixed $playlistIDs
-     */
-    public function setPlaylistIDs($playlistIDs)
-    {
-        $this->playlistIDs = $playlistIDs;
-    }
-
-    /**
      * Get id
      *
      * @return int

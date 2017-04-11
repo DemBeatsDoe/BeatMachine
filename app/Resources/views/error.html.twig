@@ -1,2 +1,7 @@
+{% extends 'page.html.twig' %}
 
-<h1> ERROR: {{ error }}</h1>
+{% block pagebody %}
+    <h1>Uh oh...</h1>
+    <h2>We have a problem!</h2>
+    <h3>{{ error }}</h3>
+{% endblock %}
