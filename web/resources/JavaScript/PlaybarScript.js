@@ -3,6 +3,7 @@ var playBar = (function (jQueryRef) {
 
     //Script for controlling soundcloud widget API
     var scWidget;
+    var player;
     var barCanvas;
     var ctx;
     var currentTrackIndex = 0;
@@ -24,18 +25,36 @@ var playBar = (function (jQueryRef) {
 
     //Function to add a song to the playlist
     function addSongToPlaylist(songName, trackID, songArt="https://upload.wikimedia.org/wikipedia/en/1/16/All_star.jpg") {
-        playlist.push({name: songName, url:"http://api.soundcloud.com/tracks/"+trackID, art: songArt});
+        //Check if soundcloud or youtube link
+        var properties = trackID.split(":");
+        if(properties[0] == "YT"){
+            playlist.push({name: songName, url: properties[1], art: songArt, YT:true});
+        }
+        else {
+            playlist.push({name: songName, url: "http://api.soundcloud.com/tracks/" + trackID, art: songArt, YT:false});
+        }
+
         return playlist.length-1;
     }
 
     //Function to play the current song
     function playSong() {
-        scWidget.play();
+
+        //Check if youtube
+        if(playlist[currentTrackIndex].YT){
+            player.playVideo();
+        }
+        //Otherwise assume soundcloud
+        else{
+            scWidget.play();
+        }
+
         $("#playPauseIcon").removeClass().addClass('glyphicon glyphicon-pause');
     }
 
     //Function to pause the current song
     function pauseSong() {
+        player.pauseVideo();
         scWidget.pause();
         $("#playPauseIcon").removeClass().addClass('glyphicon glyphicon-play');
     }
@@ -59,8 +78,8 @@ var playBar = (function (jQueryRef) {
 
     //Function to play next song
     function playNextSong() {
-        currentTrackIndex = (currentTrackIndex+1)%playlist.length;
-        playSongAt(currentTrackIndex);
+        var newTrackIndex = (currentTrackIndex+1)%playlist.length;//Play the next song
+        playSongAt(newTrackIndex);
     }
 
     //Function to play the previous song
@@ -72,6 +91,7 @@ var playBar = (function (jQueryRef) {
     //Function to play a specific song in the playlist
     function playSongAt(index, autoplay=true) {
         //redrawBar(0);
+        pauseSong();
 
         //Set the song name
         $('#songTitleLabel').stop(false, true).animate({'opacity': 0}, 0, function () {
@@ -91,13 +111,23 @@ var playBar = (function (jQueryRef) {
         $("#playbarIconB2").attr("src", playlist[negMod(index-2,playlist.length)].art);
 
         //Load the song
-        scWidget.load(playlist[index].url, {auto_play: autoplay});
+        //Check if a youtube song
+        if(playlist[index].YT){
+            player.loadVideoById(playlist[index].url, 0, "small");
+        }
+        //Otherwise assume soundcloud
+        else
+        {
+            scWidget.load(playlist[index].url, {auto_play: autoplay});
+        }
         currentTrackIndex = index;
 
         if(autoplay){
             isSongPlaying = true;
             $("#playPauseIcon").removeClass().addClass('glyphicon glyphicon-pause');
         }
+
+        playSong();
 
         //Fire event
         var event = new Event("newSongLoaded");
@@ -161,11 +191,20 @@ var playBar = (function (jQueryRef) {
         barCanvas.style.width ='100%';
         barCanvas.width  = barCanvas.offsetWidth;
         ctx.canvas.width = barCanvas.width;
+        redrawBar(0);
 
+        //---------------------------------------------Youtube---------------------------------------:
+
+        // 1. This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        //-----------------------------------------Soundcloud-------------------------------------:
         //Set widget
         scWidget = SC.Widget("so");
-
-        redrawBar(0);
 
         //Listen for song finish
         scWidget.bind(SC.Widget.Events.FINISH, function() {
@@ -175,14 +214,48 @@ var playBar = (function (jQueryRef) {
         //Listen for progress of current song
         scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, function (soundInfo ) {
             redrawBar((soundInfo.relativePosition));
-        })
+        });
     });
+
+    function initYoutubePlayer(){
+        //---------------------------------------------Youtube---------------------------------------:
+        player = new YT.Player('player', {
+            height: '10',
+            width: '10',
+            videoId: '',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+
+        // 4. The API will call this function when the video player is ready.
+        function onPlayerReady(event) {
+            //event.target.playVideo();
+        }
+
+        //Listen for song finish
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                playNextSong();
+            }
+        }
+
+        //Listen for progress of current song
+        setInterval(function(){
+            if(playlist[currentTrackIndex].YT){
+                var ratio = Math.min(1, player.getCurrentTime()/player.getDuration());
+                redrawBar(ratio);
+            }
+        }, 50);
+    }
 
     function negMod(num, den) {
         return (((num)%den)+den)%den;
     }
 
     return {
+        initYoutubePlayer:initYoutubePlayer,
         loadPlaylist: loadPlaylist,
         emptyPlaylist: emptyPlaylist,
         addSongToPlaylist: addSongToPlaylist,
@@ -194,3 +267,7 @@ var playBar = (function (jQueryRef) {
     }
 
 })($);
+
+function onYouTubeIframeAPIReady() {
+    playBar.initYoutubePlayer();
+}
