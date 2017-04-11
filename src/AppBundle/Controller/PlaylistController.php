@@ -54,7 +54,7 @@ class PlaylistController extends Controller
             'songs' => $songs,
             'collaborators' => $collaborators,
             'editMode' => $editable,
-            'canUserEdit' => $this->canUserEdit($playlistID, $this->getUser()->getID()),
+            'canUserEdit' => $this->canUserEdit($playlistID, $this->getUser()),
             'public' => $playlist->getIsPublic()
         ));
     }
@@ -140,7 +140,7 @@ class PlaylistController extends Controller
         return $this->render('create_playlist.html.twig');
     }
 
-    private function canUserEdit($playlistID, $userID) {
+    private function canUserEdit($playlistID, $user) {
         $em = $this->getDoctrine()->getManager();
 
         //Get playlist + user data from DB
@@ -148,15 +148,15 @@ class PlaylistController extends Controller
 
         //Check user ID
 
-        if (is_null($userID)) { //Not logged in
+        if (is_null($user)) { //Not logged in
             if ($playlist->getIsPublic()) {
                 return false;
             } else {
                 return true; //Editable with link
             }
         }
-        if ($userID == $playlist->getUserID()) return true; //Owner
-        if (in_array($userID, $playlist->getCollaborators())) return true; //Collaborator
+        if ($user->getID() == $playlist->getUserID()) return true; //Owner
+        if (in_array($user->getID(), $playlist->getCollaborators())) return true; //Collaborator
     }
 
     /**
@@ -174,8 +174,8 @@ class PlaylistController extends Controller
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
         if ($playlist == null) return $this->render('error.html.twig', array('error' => "Couldn't find playlist: ".$playlistID));
 
-        //Get current user ID
-        $userID = $this->getUser()->getID();
+        //Get current user
+        $userID = $this->getUser();
 
         return $this->indexAction($request, $this->canUserEdit($playlistID, $userID));
     }
@@ -245,7 +245,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+        if ($this->canUserEdit($playlistID, $this->getUser())) {
             $playlist->setName($name);
             $em->merge($playlist);
             $em->flush();
@@ -265,7 +265,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+        if ($this->canUserEdit($playlistID, $this->getUser())) {
             $song = $em->getRepository('AppBundle:Song')->find($playlist->getSongList()[$songIndex]);
 
             $song->setName($name);
@@ -288,7 +288,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+        if ($this->canUserEdit($playlistID, $this->getUser())) {
             $song = $em->getRepository('AppBundle:Song')->find($playlist->getSongList()[$songIndex]);
 
             $song->setArtist($name);
@@ -352,7 +352,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+        if ($this->canUserEdit($playlistID, $this->getUser())) {
 
             $url = $request->request->get('url');
             $song = $em->getRepository('AppBundle:Song')->findOneBy(array('musicLink' => $url));
@@ -393,7 +393,7 @@ class PlaylistController extends Controller
         $em = $this->getDoctrine()->getManager();
         $playlist = $em->getRepository('AppBundle:Playlist')->find($playlistID);
 
-        if ($this->canUserEdit($playlistID, $this->getUser()->getID())) {
+        if ($this->canUserEdit($playlistID, $this->getUser())) {
 
             $playlist->removeSong($songID);
             $em->merge($playlist);
