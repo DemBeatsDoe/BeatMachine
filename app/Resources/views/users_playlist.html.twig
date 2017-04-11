@@ -176,7 +176,7 @@
 
                 //Get metadata
                 jQuery.getJSON("https://www.googleapis.com/youtube/v3/videos", {
-                    part: "snippet,statistics",
+                    part: "snippet,contentDetails",
                     id: processedURL,
                     key: "AIzaSyC0er3oYG7krLhtMVWJA1hedi1ezx_Ecwk"
                 }, function(data) {
@@ -185,10 +185,13 @@
                         var art = data.items[0].snippet.thumbnails.medium.url;
                         var title = data.items[0].snippet.title;
                         var author = data.items[0].snippet.channelTitle;
+                        var duration = data.items[0].contentDetails.duration;
+                        var durationConverted = convertToMinSec(duration);
+                        var durationString = durationConverted.minutes+":"+durationConverted.seconds;
 
-                        sendNewSongToDB(title,  author , "YT:"+processedURL, art);
+                        sendNewSongToDB(title,  author , "YT:"+processedURL, art, durationString);
                     }
-                    else{
+                    else
                         //Failed to parse link
                         document.getElementById('songURL').value = "";
                         document.getElementById('songURL').placeholder = "Couldn't parse link";
@@ -226,6 +229,21 @@
 
         }
 
+        function convertToMinSec(input){
+            var reptms = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
+            var hours = 0, minutes = 0, seconds = 0, totalseconds;
+
+            if (reptms.test(input)) {
+                var matches = reptms.exec(input);
+                if (matches[1]) hours = matches[1];
+                if (matches[2]) minutes = matches[2];
+                if (matches[3]) seconds = matches[3];
+                totalseconds = hours * 3600  + minutes * 60 + seconds;
+            }
+
+            return{minutes:minutes, seconds:seconds};
+        }
+
         function extractHostname(url) {
             var hostname;
             //find & remove protocol (http, ftp, etc.) and get the hostname
@@ -251,11 +269,15 @@
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
 
-        function sendNewSongToDB(songTitle, songAuthor, url, artwork){
+        function sendNewSongToDB(songTitle, songAuthor, url, artwork, duration){
+            if(!duration){
+                duration = "3:" + Math.floor(Math.random()*50 + 10);
+            }
+
             var xxhttp = new XMLHttpRequest();
             xxhttp.open("POST", "/playlist/addSong", true);
             xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xxhttp.send('playlistID={{ playlistID }}'+'&title=' + songTitle + '&artist=' + songAuthor + '&url=' + url + '&art=' + artwork + '&length=3:' + Math.floor(Math.random()*50 + 10));
+            xxhttp.send('playlistID={{ playlistID }}'+'&title=' + songTitle + '&artist=' + songAuthor + '&url=' + url + '&art=' + artwork + '&length=' + duration);
             xxhttp.onreadystatechange = function () {
                 if (xxhttp.readyState == 4 && xxhttp.status == 200) {
                     var r = JSON.parse(xxhttp.responseText);
