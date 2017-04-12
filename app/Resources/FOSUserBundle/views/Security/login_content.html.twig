@@ -8,6 +8,7 @@
     <div class="col-xs-6 col-md-4"></div>
 
     <div class="col-xs-6 col-md-4">
+        <h1 class="text-center">Log in</h1>
         <form action="{{ path("fos_user_security_check") }}" method="post" class="form-horizontal">
             {% if csrf_token %}
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
@@ -30,6 +31,8 @@
             <div style="text-align:center">
                 <input type="submit" class="btn btn-success btn-block"id="_submit" name="_submit" value="{{ 'Submit'|trans }}" />
             </div>
+
+            <h5 class="text-center">Don't have an account? <a href="{{ path('fos_user_registration_register') }}">Register</a></h5>
         </form>
     </div>
 
