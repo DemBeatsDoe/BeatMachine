@@ -48,3 +48,12 @@
     height: 30px;
 }
 
+.header .loginbuttons .btn-wireframe {
+    background-color: #3498DB;
+    border: 2px solid #ffffff;
+}
+
+.header .loginbuttons .btn-wireframe:hover {
+    background-color: #ffffff;
+    transition: ease-in-out 0.1s;
+}
