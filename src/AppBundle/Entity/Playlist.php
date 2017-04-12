@@ -40,7 +40,7 @@ class Playlist
     /**
      * @var string
      *
-     * @ORM\Column(name="shareCode", type="string", length=12)
+     * @ORM\Column(name="shareCode", type="string", length=12, nullable=true)
      */
     private $shareCode;
 

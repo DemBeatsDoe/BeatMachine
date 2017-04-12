@@ -7,55 +7,49 @@
                 <div class="panel-title">Create Playlist</div>
             </div>
             <div style="padding-top:30px" class="panel-body" >
-                <!-- <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div> -->
-
                 <form id="CreatePlaylistForm" class="form-horizontal" role="form">
-
                     <div style="margin-bottom: 10px" class="input-group">
                         <input id="playlistName" type="text" class="form-control" name="playlistName" value="" placeholder="Name of playlist">
                     </div>
 
                     <div style="margin-top:10px" class="form-group">
-
-                        {#{% for playlist in playlists %}#}
-
                         <!-- Button -->
                         <div class="col-sm-12 controls">
                             <a id="btn-createPlaylist" class="btn btn-success" onclick="createPlaylist()">Create Playlist </a>
                         </div>
-                        {#{% endfor %}#}
                     </div>
-
-
                 </form>
             </div>
         </div>
     </div>
-
-
 {% endblock %}
 
 {% block javascripts %}
 <script type="text/javascript">
 
-    var playlistResponse;
+    $('#playlistName').keypress(function (e) { //On enter
+        if (e.which == 13) {
+            createPlaylist();
+            return false;
+        }
+    });
+
     function createPlaylist() {
         var name = $("#playlistName").val();
 
         xxhttp = new XMLHttpRequest();
         xxhttp.open("POST", "/callCreatePlaylist", true);
         xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xxhttp.send('name=' + name + '&id=' + {{ app.user.id }});
+        xxhttp.send('name=' + name);
 
-
-    xxhttp.onreadystatechange = function () {
-
-        if (xxhttp.readyState == 4 && xxhttp.status == 200) {
-            window.alert("Success")
-            playlistResponse = JSON.parse(xxhttp.responseText).playlistID;
-            window.location = '/playlist?id='+playlistResponse;
+        xxhttp.onreadystatechange = function () {
+            if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                response = JSON.parse(xxhttp.responseText);
+                if (response.success) {
+                    window.location = '/playlist?id='+response.playlistID;
+                }
+            }
         }
-    }
     }
 
 </script>

@@ -24,7 +24,7 @@ var playBar = (function (jQueryRef) {
     }
 
     //Function to add a song to the playlist
-    function addSongToPlaylist(songName, trackID, songArt="https://upload.wikimedia.org/wikipedia/en/1/16/All_star.jpg") {
+    function addSongToPlaylist(songName, trackID, songArt='https://upload.wikimedia.org/wikipedia/en/1/16/All_star.jpg') {
         //Check if soundcloud or youtube link
         var properties = trackID.split(":");
         if(properties[0] == "YT"){
@@ -181,6 +181,14 @@ var playBar = (function (jQueryRef) {
 
         //ctx.fillRect(0,0, 10,10);
     }
+
+    $(window).keypress(function (e) {
+        if (e.keyCode === 0 || e.keyCode === 32) {
+            e.preventDefault();
+            togglePlay();
+            return false;
+        }
+    })
 
     //Bind widget and set event listeners
     $(function() {

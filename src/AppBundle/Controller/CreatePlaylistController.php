@@ -28,35 +28,33 @@ class CreatePlaylistController extends Controller
      */
     public function createPlaylist(Request $request)
     {
-
         //Store the user id
-        $userID = $request->request->get('id');
+        $user = $this->getUser();
 
-        $playlistName = $request->request->get('name');
-        $em = $this->getDoctrine()->getManager();
+        if (!is_null($user)) {
+            $userID = $user->getID();
+            $playlistName = $request->request->get('name');
+            $em = $this->getDoctrine()->getManager();
 
-        //Get user from DB
-        //$user = $em->getRepository('AppBundle:User')->find($userID);
-        //if ($user == null) return $this->render('error.html.twig', array('error' => "Couldn't find user: ".$userID));
+            $playlist = new Playlist();
+            $playlist->setName($playlistName);
+            $playlist->setUserID($userID);
+            $playlist->setIsPublic(true);
+            $playlist->setVotes(0);
+            $playlist->setLocation('Bath, UK');
+            $playlist->setArtLink('https://www.theedgesusu.co.uk/wp-content/uploads/2017/03/Alt-J.jpg');
+            $playlist->setSongList([]);
+            $playlist->setCollaborators([]);
 
-        $playlist = new Playlist();
-        $playlist->setName($playlistName);
-        $playlist->setUserID($userID);
-        $playlist->setIsPublic(true);
-        $playlist->setVotes(0);
-        $playlist->setLocation('Bath, UK');
-        $playlist->setArtLink('https://www.theedgesusu.co.uk/wp-content/uploads/2017/03/Alt-J.jpg');
-        $playlist->setSongList([]);
 
-        $em->persist($playlist);
-        $em->flush();
+            $em->persist($playlist);
+            $em->flush();
 
-        $playlistID = $playlist->getId();
+            $playlistID = $playlist->getId();
 
-        return new JsonResponse(array(
-        //return $this->render('createPlaylist.html.twig', array(
-            'playlistID' => $playlistID,
-        ));
+            return new JsonResponse(array('success' => true, 'playlistID' => $playlistID));
+        }
+        return new JsonResponse(array('success' => false));
     }
 }
 

@@ -29,7 +29,14 @@ class ProfileController extends Controller
         $userPlaylists = array();
         foreach ($allPlaylists as $p) {
             if (array_search($userID, $p->getCollaborators()) != false || $userID == $p->getUserID()) {
-                array_push($userPlaylists, $p);
+                if ($p->getIsPublic()) {
+                    array_push($userPlaylists, $p);
+                } else {
+                    $activeUser = $this->getUser();
+                    if (!is_null($activeUser)) {
+                        if ($activeUser->getID() == $p->getUserID()) array_push($userPlaylists, $p);
+                    }
+                }
             }
         }
 

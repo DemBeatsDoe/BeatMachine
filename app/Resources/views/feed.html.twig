@@ -14,14 +14,8 @@
                 <a class="modeItem {% if mode=='favourites' %}modeItemActive{% endif %}" href="./?mode=favourites">Favourites</a>
             {% endif %}
         </div>
-        <div class="locationLabel">Playlists from {{ location }}</div>
+        {#<div class="locationLabel">Playlists from {{ location }}</div>#}
 
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-        <a class="createPlaylistButton" href="/createPlaylist">
-            <div class="createPlaylistButtonIcon" ></div>
-            <div class="createPlaylistButtonText">Create Playlist</div>
-        </a>
-        {% endif %}
         {% for playlist in playlists %}
             {% set a = loop.index0%}
 
@@ -45,11 +39,11 @@
 
                     {% else %}
 
-                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled" onclick="while(true){alert('You can\'t vote here!!!');}"></span>
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled" onclick="alert('You can\'t vote here!!!');"></span>
                     <br>
                     <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                     <br>
-                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled" onclick="while(true){alert('You can\'t vote here!!!');}"></span>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled" onclick="alert('You can\'t vote here!!!');"></span>
                     {%  endif %}
                 {% else %}
                     <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" onclick="window.location = '/login';"></span>
@@ -60,26 +54,23 @@
                 {% endif %}
                 </div>
 
-            <img class="album-art" src="{{ playlist.getArtLink }}">
+            <a href="/playlist?id={{ playlist.getId }}"><img class="album-art" src="{% if songArt[a] is empty %} {{ playlist.artLink }} {% else %} {{songArt[a][0]}} {% endif %}"></a>
             <h class="playlist-title">
                 <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
             </h>
 
+
             {% for url in songArt[a] %}
                 {% set no = loop.index0%}
-                {% if no < 5 %}
-                    <img class="songIcon" src="{{ url }}">
+                {% if no < 6 and no > 0 %}
+                    <img onclick="setActivePlaylist({{ a }}, {{ no }});" class="songIcon" src="{{ url }}">
                 {% endif %}
             {%  endfor %}
 
             <div class="playlist-info-box">
-                <button class="smallPlayPauseButton" id="playButton{{ a }}" onclick="setActivePlaylist({{ a }})"><span class="glyphicon glyphicon-play small"></span></button>
+                <button class="smallPlayPauseButton" id="playButton{{ a }}" onclick="setActivePlaylist({{ a }}, 0);"><span class="glyphicon glyphicon-play small"></span></button>
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    {% if playlist.id in app.user.likedPlaylists %}
-                        <div id="unfav{{ playlist.id }}" class="playlist-heartButton-clicked" onclick="unfavouritePlaylist({{ playlist.id }})"></div>
-                    {% else %}
-                        <div id="fav{{ playlist.id }}" class="playlist-heartButton" onclick="favouritePlaylist({{ playlist.id }})"></div>
-                    {% endif %}
+                        <div id="fav{{ playlist.id }}" class="playlist-heartButton{% if playlist.id in app.user.likedPlaylists %}-clicked{% endif %}" onclick="toggleFavourite({{ playlist.id }})"></div>
                 {% endif %}
                 {#<div class="playlist-shareButton">
                     Share
@@ -105,7 +96,7 @@
 
         ];
 
-        function setActivePlaylist(localIndex) {
+        function setActivePlaylist(localIndex, songIndex) {
             //Set all buttons to inactive
             $(".smallPlayPauseButton").attr("class", "smallPlayPauseButton");
             $(".smallPlayPauseButton").find(".glyphicon").attr("class", "glyphicon glyphicon-play small");
@@ -116,6 +107,7 @@
 
             //Play playlist
             playBar.loadPlaylist(playlists[localIndex]);
+            playBar.playSongAt(songIndex, true);
 
             //$("#playPauseIcon").removeClass().addClass('glyphicon glyphicon-pause');
         }
@@ -126,42 +118,24 @@
             document.body.onclick = checkIfHeartClicked;
         };
 
-        var readyforclick = true;
-
-        function favouritePlaylist(playlistid) {
-            if (readyforclick) {
-                readyforclick = false;
+        function toggleFavourite(playlistid) {
                 xxhttp = new XMLHttpRequest();
-                xxhttp.open("POST", "/playlist/favourite", true);
+                xxhttp.open("POST", "/playlist/toggleFavourite", true);
                 xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xxhttp.send('playlistID=' + playlistid);
-                document.getElementById("fav" + playlistid).className = 'playlist-heartButton-clicked';
-                document.getElementById("fav" + playlistid).onclick = unfavouritePlaylist(playlistid);
-                document.getElementById("fav" + playlistid).id = 'unfav' + playlistid;
                 xxhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        readyforclick = true;
+                    if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                        response = JSON.parse(xxhttp.responseText);
+                        if (response.success) {
+                            elem = document.getElementById("fav" + playlistid);
+                            if (elem.className == 'playlist-heartButton-clicked') {
+                                elem.className = 'playlist-heartButton';
+                            } else {
+                                elem.className = 'playlist-heartButton-clicked';
+                            }
+                        }
                     }
                 }
-            }
-        }
-
-        function unfavouritePlaylist(playlistid) {
-            if (readyforclick) {
-                readyforclick = false;
-                xxhttp = new XMLHttpRequest();
-                xxhttp.open("POST", "/playlist/unfavourite", true);
-                xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xxhttp.send('playlistID=' + playlistid);
-                document.getElementById("unfav" + playlistid).className = 'playlist-heartButton';
-                document.getElementById("unfav" + playlistid).onclick = favouritePlaylist(playlistid);
-                document.getElementById("unfav" + playlistid).id = 'fav' + playlistid;
-                xxhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        readyforclick = true;
-                    }
-                }
-            }
         }
 
         function vote(playlistid, direction, textid, aboveid, belowid) {

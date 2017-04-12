@@ -15,7 +15,9 @@
         }
 
         .playlistArt {
-            height: 100%;
+            height: 150px;
+            width: 150px;
+            object-fit: cover;
             position: relative;
             float: left;
         }
@@ -392,8 +394,7 @@
 
 {% block pagebody %}
     <div class="playlistHeader">
-        <img class="playlistArt" src="{{ playlistArt }}">
-
+        <img class="playlistArt" src="{% if songs is empty %} {{ playlistArt }} {% else %} {{songs[0].artLink}} {% endif %}">
 
         <span class="collaboratorIcons pull-right">
             {#                <a href="/playlist/edit/collaborators?id={{ playlistID }}">#}

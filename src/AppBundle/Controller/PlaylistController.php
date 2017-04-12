@@ -133,13 +133,6 @@ class PlaylistController extends Controller
         return new JsonResponse(array('success' => false));
     }
 
-    /**
-     * @Route("/playlist/create")
-     */
-    public function createAction() {
-        return $this->render('create_playlist.html.twig');
-    }
-
     private function canUserEdit($playlistID, $user) {
         $em = $this->getDoctrine()->getManager();
 
@@ -405,7 +398,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * @Route("/playlist/favourite")
+     * @Route("/playlist/toggleFavourite")
      */
     public function favouritePlaylist(Request $request) {
         $playlistID = $request->request->get('playlistID');
@@ -417,12 +410,15 @@ class PlaylistController extends Controller
         if (!is_null($playlist) && !is_null($user)) {
             if (!in_array($playlistID, $user->getLikedPlaylists())) {
                 $user->addLikedPlaylist($playlistID);
-                $em->merge($user);
-                $em->flush();
+            } else {
+                $user->removeLikedPlaylist($playlistID);
             }
+            $em->merge($user);
+            $em->flush();
+            return new JsonResponse(array('success' => true));
         }
 
-        return new JsonResponse(array());
+        return new JsonResponse(array('success' => false));
     }
 
     /**
