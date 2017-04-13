@@ -100,7 +100,7 @@
         //Set this pages playlist
         playBar.emptyPlaylist();
         {% for song in songs %}
-        playBar.addSongToPlaylist('{{ song.name }}', '{{ song.musicLink }}');
+        playBar.addSongToPlaylist('{{ song.name }}', '{{ song.artist }}', '{{ song.musicLink }}', '{{ song.artLink }}');
         {% endfor %}
 
         //Lest listener for song change
