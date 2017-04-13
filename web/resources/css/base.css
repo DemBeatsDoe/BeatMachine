@@ -10,7 +10,7 @@ html,body {
 }
 
 body{
-    background-color: #ffffff;
+    background-color: #fafafa;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
@@ -65,7 +65,57 @@ body{
     top: -15px;
     object-fit: cover;
     box-shadow: 0px 0px 10px #888888;
+    border-radius: 3px;
 }
+
+ .playWrapper {
+    opacity: 0;
+     position: absolute;
+     float: left;
+ ; z-index: 91;
+    top: -15px;
+     left: 69px;
+    width: 130px; height: 130px;
+    background: rgba(0,0,0,0.6) url("http://wptf.com/wp-content/uploads/2014/05/play-button.png") no-repeat scroll center center / 50px 50px;
+     transition: ease-in-out 0.1s;
+    cursor: pointer;
+ }
+
+.playWrapper .playBtn {
+    position: absolute; z-index: 92;
+    width: 50px; height: 50px;
+    left: 0; right: 0; top: 0; bottom: 0; margin: auto; /* center */
+}
+
+.playWrapper:hover {
+    opacity: 1;
+    transition: ease-in-out 0.1s;
+}
+
+.playWrapperSml {
+    opacity: 0;
+    z-index: 91;
+    position: relative;
+    left: 0;
+    margin-left: -10px;
+    top: 43px;
+    width: 65px; height: 65px;
+    background: rgba(0,0,0,0.6) url("http://wptf.com/wp-content/uploads/2014/05/play-button.png") no-repeat scroll center center / 50px 50px;
+    transition: ease-in-out 0.1s;
+    cursor: pointer;
+}
+
+.playWrapperSml .playBtn {
+    position: absolute; z-index: 92;
+    width: 30px; height: 30px;
+    left: 0; right: 0; top: 0; bottom: 0; margin: auto; /* center */
+}
+
+.playWrapperSml:hover {
+    opacity: 1;
+    transition: ease-in-out 0.1s;
+}
+
 h.playlist-title{
     float: left;
     position: absolute;
@@ -98,6 +148,8 @@ h.playlist-title a{
     background-size: cover;
     object-fit: cover;
     box-shadow: 0px 0px 5px #a0a0a0;
+    border-radius:2px;
+    cursor: pointer;
 }
 .playlist-info-box{
     position: relative;
