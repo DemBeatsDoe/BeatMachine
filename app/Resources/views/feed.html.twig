@@ -90,8 +90,10 @@
         var playlists = [
         {% for playlist in playlists %}
             {% set a = loop.index0%}
-            [{% for name in songNames[a] %}{% set b = loop.index0%}{songName: "{{ name }}", trackID:"{{ songLinks[a][b] }}", songArt:"{{ songArt[a][b] }}"}{% if not loop.last %},{% endif %}{%  endfor %}]{% if not loop.last %},
-{% endif %}
+            [{% for name in songNames[a] %}
+                    {% set b = loop.index0%}
+                {songName: "{{ name }}", songArtist: "{{ songArtists[a][b] }}", trackID:"{{ songLinks[a][b] }}", songArt:"{{ songArt[a][b] }}"}{% if not loop.last %},{% endif %}{%  endfor %}]{% if not loop.last %},
+            {% endif %}
         {% endfor %}
 
         ];

@@ -54,23 +54,27 @@ class FeedController extends Controller
         //Get array of song art links for each playlist
         $songArt= array();
         $songNames= array();
+        $songArtists = array();
         $songLinks= array();
         foreach($this->playlists as $playlist) {
             $artarr = array();
             $namearr = array();
             $linkarr = array();
+            $artistArr = array();
             foreach($playlist->getSongList() as $song) {
                 $song = $em->getRepository('AppBundle:Song')->find($song);
                 array_push($artarr, $song->getArtLink());
                 array_push($namearr, $song->getName());
                 array_push($linkarr, $song->getMusicLink());
+                array_push($artistArr, $song->getArtist());
             }
             array_push($songArt, $artarr);
             array_push($songNames, $namearr);
             array_push($songLinks, $linkarr);
+            array_push($songArtists, $artistArr);
         }
 
-        return $this->render('feed.html.twig', array('location' => $loc, 'playlists' => $this->playlists, 'songArt' => $songArt, 'songNames' => $songNames, 'songLinks' => $songLinks, 'mode' => $mode));
+        return $this->render('feed.html.twig', array('location' => $loc, 'playlists' => $this->playlists, 'songArt' => $songArt, 'songNames' => $songNames, 'songLinks' => $songLinks,'songArtists' => $songArtists, 'mode' => $mode));
     }
 
     /**

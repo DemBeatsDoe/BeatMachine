@@ -11,27 +11,27 @@ var playBar = (function (jQueryRef) {
     var isSongPlaying = false;
 
     //Function to replace the currently playing song in the playlist and start playing it
-    function playNewSong(name, id) {
-        playSongAt(addSongToPlaylist(name, id));
+    function playNewSong(name, songArtist, id) {
+        playSongAt(addSongToPlaylist(name, songArtist, id));
     }
 
     function loadPlaylist(songsArray, autoplay=true) {
         emptyPlaylist();
         for (i = 0; i < songsArray.length; i++) {
-            addSongToPlaylist(songsArray[i].songName, songsArray[i].trackID, songsArray[i].songArt);
+            addSongToPlaylist(songsArray[i].songName, songsArray[i].songArtist, songsArray[i].trackID, songsArray[i].songArt);
         }
         playSongAt(0, autoplay);
     }
 
     //Function to add a song to the playlist
-    function addSongToPlaylist(songName, trackID, songArt='https://upload.wikimedia.org/wikipedia/en/1/16/All_star.jpg') {
+    function addSongToPlaylist(songName, songArtist, trackID, songArt='https://upload.wikimedia.org/wikipedia/en/1/16/All_star.jpg') {
         //Check if soundcloud or youtube link
         var properties = trackID.split(":");
         if(properties[0] == "YT"){
-            playlist.push({name: songName, url: properties[1], art: songArt, YT:true});
+            playlist.push({name: songName, artist: songArtist, url: properties[1], art: songArt, YT:true});
         }
         else {
-            playlist.push({name: songName, url: "http://api.soundcloud.com/tracks/" + trackID, art: songArt, YT:false});
+            playlist.push({name: songName, artist: songArtist, url: "http://api.soundcloud.com/tracks/" + trackID, art: songArt, YT:false});
         }
 
         return playlist.length-1;
@@ -93,9 +93,16 @@ var playBar = (function (jQueryRef) {
         //redrawBar(0);
         pauseSong();
 
-        //Set the song name
+        //Set the song name, artist, art
         $('#songTitleLabel').stop(false, true).animate({'opacity': 0}, 0, function () {
             $(this).text(playlist[index].name);
+        }).animate({'opacity': 1}, 500);
+        $('#songArtistLabel').stop(false, true).animate({'opacity': 0}, 0, function () {
+            $(this).text(playlist[index].artist);
+        }).animate({'opacity': 1}, 500);
+
+        $('#songAlbumArt').stop(false, true).animate({'opacity': 0}, 0, function () {
+            $(this).attr('src',playlist[index].art);
         }).animate({'opacity': 1}, 500);
         //$("#songTitleLabel").text(playlist[index].name);
 
