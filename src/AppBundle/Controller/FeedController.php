@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Playlist;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,8 +38,12 @@ class FeedController extends Controller
         }
 
         //Get public playlists in order of votes
+        $this->playlists = array();
         if($mode == "new"){
-            $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('id' => 'DESC'), 10);
+            $temp = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('id' => 'DESC'), 10);
+            foreach ($temp as $p) {
+                if (sizeof($p->getSongList()) != 0) array_push($this->playlists, $p);
+            }
         }
         else if ($mode == "favourites") {
             $ids = $em->getRepository('AppBundle:User')->find($this->getUser())->getLikedPlaylists();
@@ -48,7 +53,10 @@ class FeedController extends Controller
             }
             $this->playlists = $array;
         } else {
-            $this->playlists = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
+            $temp = $em->getRepository('AppBundle:Playlist')->findBy(array('isPublic' => '1', 'location' => $loc), array('votes' => 'DESC'), 10);
+            foreach ($temp as $p) {
+                if (sizeof($p->getSongList()) != 0) array_push($this->playlists, $p);
+            }
         }
 
         //Get array of song art links for each playlist
