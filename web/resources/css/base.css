@@ -196,7 +196,7 @@ h.playlist-title a{
 .modeSelector{
     text-align: center;
 
-    margin-top: 100px;
+    margin-top: 0px;
     margin-bottom: 50px;
 
     color: #2f364a;
@@ -255,11 +255,16 @@ h.playlist-title a{
     font-size: 18pt;
     font-weight: 900;
 }
-
 .createPlaylistButton{
     position: relative;
     top: -20px;
-    text-align: center;
+    width: 132px;
+    height: 96px;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 20px;
+    margin-top: 120px;
+
 }
 .createPlaylistButton:hover{
     text-decoration: none;
@@ -267,8 +272,10 @@ h.playlist-title a{
 
 .createPlaylistButtonIcon{
     background-image: url("../images/createPlaylistButton.png");
-    width: 30px;
-    height: 30px;
+    width: 60px;
+    height: 60px;
+    display: block;
+    margin: 0 auto;
     background-size: cover;
     margin-bottom: 10px;
 }
@@ -278,25 +285,24 @@ h.playlist-title a{
 }
 
 .createPlaylistButtonText{
-    position: relative;
-    top: -35px;
-    left: -100px;
-    width: 100px;
+    display: block;
+    margin: 0 auto;
+    width: 132px;
     color: white;
-    display:none;
+    background-color: #ff5500;
     border-radius: 25px;
     padding: 1px;
+    text-align: center;
     outline:none;
     text-decoration:none;
 
     font-family: 'Lato', sans-serif;
-    font-size: 10pt;
+    font-size: 13pt;
     font-weight: 500;
 }
 .createPlaylistButton:hover .createPlaylistButtonText{
+    background-color: #d04000;
     text-decoration: none;
-    display:block;
-
 }
 
 .playlist-heartButton{

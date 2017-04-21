@@ -7,14 +7,23 @@
 
 {% block body %}
     <div class="feed">
-        <div class="modeSelector">
+
+        {#<div class="locationLabel" style="margin-top: 120px;">Playlists from {{ location }}</div>#}
+
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            <a class="createPlaylistButton" href="/createPlaylist">
+                <div class="createPlaylistButtonIcon" ></div>
+                <div class="createPlaylistButtonText">Create Playlist</div>
+            </a>
+        {% endif %}
+
+        <div class="modeSelector" {% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}style="margin-top: 100px;"{% endif %}>
             <a class="modeItem {% if mode=='top' %}modeItemActive{% endif %}"  href="./?mode=top">Popular</a>
             <a class="modeItem {% if mode=='new' %}modeItemActive{% endif %}" href="./?mode=new">New Releases</a>
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                 <a class="modeItem {% if mode=='favourites' %}modeItemActive{% endif %}" href="./?mode=favourites">Favourites</a>
             {% endif %}
         </div>
-        {#<div class="locationLabel">Playlists from {{ location }}</div>#}
 
         {% for playlist in playlists %}
             {% set a = loop.index0%}
