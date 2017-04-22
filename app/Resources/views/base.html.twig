@@ -48,60 +48,36 @@
                     <div class="col-md-1"></div>
                     <div class="col-md-2 location pull-left">
                         <img class="icon" src="{{ asset('resources/images/location.png') }}">
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <span>
-                                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ app.user.location }}<b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/">My Location</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=Bristol, UK">Bristol</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=London, UK">London</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=Manchester, UK">Manchester</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=Paris, UK">Paris</a></li>
-                                        </ul>
-                                    </li>
-                            </span>
-                        {% else %}
-                            <span>
-                                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Bath, UK<b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/">My Location</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=Bristol, UK">Bristol</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=London, UK">London</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=Manchester, UK">Manchester</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="/?loc=Paris, UK">Paris</a></li>
-                                        </ul>
-                                    </li>
-                            </span>
-                        {% endif %}
+                        <span>
+                            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ app.user.location }}{% else %}Bath, UK{% endif %}<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/">My Location</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="/?loc=Bristol, UK">Bristol</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="/?loc=London, UK">London</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="/?loc=Manchester, UK">Manchester</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="/?loc=Paris, UK">Paris</a></li>
+                                    </ul>
+                                </li>
+                        </span>
                     </div>
 
                     <div class="title col-md-6"><a href="/">BEAT MACHINE</a></div>
 
                     <div class="loginbuttons col-md-2">
                         <ul  class="pull-right">
-                            {#{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                <a class="createPlaylistButton" href="/createPlaylist">
-                                    <li>
-                                        <div class="createPlaylistButtonIcon" ></div>
-                                        <div class="createPlaylistButtonText">Create Playlist</div>
-                                    </li>
-                                </a>
-                            {% endif %}#}
+
 
                             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                 {# <li><a href="/createPlaylist"><button type="button" class="btn btn-warning btn-circle glyphicon glyphicon-plus"></button></a></li>
                                 #}<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="usericon" class="glyphicon glyphicon-user
 "></span>  Welcome, {{ app.user.username }} <b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-                                        <li style="padding-right: 20px;"><a href="/createPlaylist">Create Playlist</a></li>
+                                        <li><a href="/"><i class="icon-cog"></i> Home</a></li>
+                                        <li style="padding-right: 20px;"><a style="cursor:pointer" onclick="createPlaylist();">Create Playlist</a></li>
                                         <li><a href="/profile?id={{ app.user.id }}"><i class="icon-cog"></i> Profile</a></li>
                                         <li><a href="/logout"><i class="icon-off"></i> Logout</a></li>
                                     </ul>
@@ -155,7 +131,26 @@
             </div>
         {% endblock %}
 
+        <script>
+            function createPlaylist() {
+                xxhttp = new XMLHttpRequest();
+                xxhttp.open("POST", "/callCreatePlaylist", true);
+                xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xxhttp.send('name=Untitled Playlist');
+
+                xxhttp.onreadystatechange = function () {
+                    if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                        response = JSON.parse(xxhttp.responseText);
+                        if (response.success) {
+                            window.location = '/playlist/edit?id='+response.playlistID;
+                        }
+                    }
+                }
+            }
+        </script>
+
         <!-- To be overidden -->
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+        {% endblock %}
     </body>
 </html>

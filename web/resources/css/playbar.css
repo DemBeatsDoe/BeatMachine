@@ -44,10 +44,7 @@
     color: #2C3E50;
     border-color: white;
 }
-.playPauseButton:active {
-    top: 0px;
-    padding-bottom: 2px;
-}
+
 .playPauseButton:focus {
     outline:0;
 }

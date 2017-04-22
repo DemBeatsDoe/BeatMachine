@@ -82,7 +82,15 @@ class FeedController extends Controller
             array_push($songArtists, $artistArr);
         }
 
-        return $this->render('feed.html.twig', array('location' => $loc, 'playlists' => $this->playlists, 'songArt' => $songArt, 'songNames' => $songNames, 'songLinks' => $songLinks,'songArtists' => $songArtists, 'mode' => $mode));
+        return $this->render('feed.html.twig', array(
+            'location' => $loc,
+            'playlists' => $this->playlists,
+            'songArt' => $songArt,
+            'songNames'=> $songNames,
+            'songLinks' => $songLinks,
+            'songArtists' => $songArtists,
+            'mode' => $mode
+        ));
     }
 
     /**

@@ -100,15 +100,16 @@
     <div class="profileInnerBlock">
         <div class="profileHeader">
             <img class="profilePicture" src="{{ asset('resources/images/default-avatar.png') }}">
-            <div class="profileName">{{ user.username }}</div>
+            <div class="profileName">{{ user.username|title }}</div>
             <div class="profileInfo"><span class="counter">{{ playlists|length }}</span>Playlists Created</div>
             <div class="profileInfo"><span class="counter">{{ count }}</span>Votes on their Playlists</div>
         </div>
 
-     <div class="settingsPlaylistCollection" >
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+{% if app.user.id == user.id %}
+        <div class="settingsPlaylistCollection" >
 
          <div class="settings">
-
              <div class="settingsTitle">Settings</div>
                  <form class="form-inline text-center">
                      <div class="form-group">
@@ -125,37 +126,24 @@
          </div>
 
          </div>
-
+{% endif %}
+        {% endif %}
 
         <div class="playlistCollection">
 
-            <div class="playlistCollectionTitle">Users Playlists:</div>
+            <div class="playlistCollectionTitle" style="padding-bottom: 20px;">{{ user.username|title }}'s Playlists</div>
 
             {% for playlist in playlists %}
-            <div class="playlist">
-                <img class="album-art" src="{{ playlist.artLink }}">
-                <h class="playlist-title">
-                    <a href="/playlist?id={{ playlist.id }}">{{ playlist.name }}</a>
-                </h>
-
+                {% set location = "Bath, UK" %}
                 {% set a = loop.index0%}
-                {% for url in songLinks[a] %}
-                    <img class="songIcon" src="{{ url }}">
-                {%  endfor %}
-
-                <div class="playlist-info-box">
-                    <div class="playlist-heartButton"></div>
-                    <div class="playlist-likeCount">
-                        {{ playlist.votes }}
-                    </div>
-                    <div class="playlist-shareButton">
-                        Share
-                    </div>
-                </div>
-            </div>
+                {% include 'playlistCard.html.twig' %}
             {% endfor %}
         </div>
     </div>
 
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% include 'feedScripts.js.twig' %}
 {% endblock %}

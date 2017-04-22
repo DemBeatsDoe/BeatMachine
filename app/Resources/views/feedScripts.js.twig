@@ -1,0 +1,154 @@
+<script type="text/javascript">
+    //Add initial playlists
+    var playlists = [
+    {% for playlist in playlists %}
+    {% set a = loop.index0%}
+    [{% for name in songNames[a] %}
+    {% set b = loop.index0%}
+    {songName: "{{ name }}", songArtist: "{{ songArtists[a][b] }}", trackID:"{{ songLinks[a][b] }}", songArt:"{{ songArt[a][b] }}"}{% if not loop.last %},{% endif %}{%  endfor %}]{% if not loop.last %},
+    {% endif %}
+    {% endfor %}
+
+    ];
+
+    function setActivePlaylist(localIndex, songIndex) {
+    if ($("#playButton"+localIndex).hasClass('clicked')) {
+    //Pause instead
+    playBar.togglePlay();
+    $(".smallPlayPauseButton").attr("class", "smallPlayPauseButton");
+    $(".smallPlayPauseButton").find(".glyphicon").attr("class", "glyphicon glyphicon-play small");
+} else {
+
+    //Set all buttons to inactive
+    $(".smallPlayPauseButton").attr("class", "smallPlayPauseButton");
+    $(".smallPlayPauseButton").find(".glyphicon").attr("class", "glyphicon glyphicon-play small");
+
+    //Set given button to active
+    $("#playButton" + localIndex).attr("class", "smallPlayPauseButton clicked");
+    $("#playButton" + localIndex).find(".glyphicon").attr("class", "glyphicon glyphicon-pause small");
+
+    //Play playlist
+    playBar.loadPlaylist(playlists[localIndex]);
+    playBar.playSongAt(songIndex, true);
+}
+
+    //$("#playPauseIcon").removeClass().addClass('glyphicon glyphicon-pause');
+}
+
+    window.onload = function(){
+    window.onscroll = requestNextPlaylist;
+    requestNextPlaylist();
+    document.body.onclick = checkIfHeartClicked;
+};
+
+    function toggleFavourite(playlistid) {
+    xxhttp = new XMLHttpRequest();
+    xxhttp.open("POST", "/playlist/toggleFavourite", true);
+    xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xxhttp.send('playlistID=' + playlistid);
+    xxhttp.onreadystatechange = function () {
+    if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+    response = JSON.parse(xxhttp.responseText);
+    if (response.success) {
+    elem = document.getElementById("fav" + playlistid);
+    if (elem.className == 'playlist-heartButton-clicked') {
+    elem.className = 'playlist-heartButton';
+} else {
+    elem.className = 'playlist-heartButton-clicked';
+}
+}
+}
+}
+}
+
+    function vote(playlistid, direction, textid, aboveid, belowid) {
+    xxhttp = new XMLHttpRequest();
+    xxhttp.open("POST", "/playlist/vote", true);
+    xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xxhttp.send('playlistID=' + playlistid + '&direction=' + direction);
+
+    xxhttp.onreadystatechange = function () {
+    if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+    var response = JSON.parse(xxhttp.responseText);
+    document.getElementById(textid).innerHTML = response.votes;
+    //Check if it has overtaken the top one
+    if (document.getElementById(textid).innerHTML > document.getElementById(aboveid).innerHTML) {
+    //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(aboveid).parentNode.parentNode);
+}
+    if (document.getElementById(textid).innerHTML < document.getElementById(belowid).innerHTML) {
+    //swapElements(document.getElementById(textid).parentNode.parentNode, document.getElementById(belowid).parentNode.parentNode);
+}
+}
+}
+
+    //Change the arrows state
+    if(direction=="up"){
+    document.getElementById("u"+playlistid).className='glyphicon glyphicon-chevron-up clicked';
+    document.getElementById("d"+playlistid).className='glyphicon glyphicon-chevron-down';
+}
+    else if(direction=="down"){
+    document.getElementById("d"+playlistid).className='glyphicon glyphicon-chevron-down clicked';
+    document.getElementById("u"+playlistid).className='glyphicon glyphicon-chevron-up';
+}
+}
+
+    function swapElements(obj1, obj2) {
+    // create marker element and insert it where obj1 is
+    var temp = document.createElement("div");
+    obj1.parentNode.insertBefore(temp, obj1);
+
+    // move obj1 to right before obj2
+    obj2.parentNode.insertBefore(obj1, obj2);
+
+    // move obj2 to right before where obj1 used to be
+    temp.parentNode.insertBefore(obj2, temp);
+
+    // remove temporary marker node
+    temp.parentNode.removeChild(temp);
+}
+
+    var waitingForData = false;
+    function requestNextPlaylist() {
+    if((window.innerHeight + window.scrollY) >= document.body.offsetHeight && !waitingForData) {
+    //Make an AJAX call
+    xhttp = new XMLHttpRequest();
+    var data = "testing";
+    xhttp.open("GET", "{{ path('requestNextPlaylistForFeed') }}", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send('items=' + (data));
+
+    waitingForData = true;
+
+    //Process the returned data
+    xhttp.onreadystatechange = function () {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+    var playlistResponse = JSON.parse(xhttp.responseText);
+    waitingForData = false;
+
+    //Append this new playlist to the feed
+    appendNewPlaylist(playlistResponse.name, playlistResponse.art, playlistResponse.likeCount, playlistResponse.songs);
+
+    //Request another playlist
+    requestNextPlaylist();
+}
+}
+}
+}
+
+    function appendNewPlaylist(playlistName, playlistArt, numLikes, songArtArray){
+
+    var newPlaylist = document.createElement("div");
+    newPlaylist.className = "playlist";
+    newPlaylist.innerHTML = "<img class=\"album-art\" src=\"resources\/images\/album-art\/" + playlistArt + "\">\r\n\t\t\t<h class=\"playlist-title\">\r\n\t\t\t" + "<a href=\"/playlist?id=" + Math.floor(Math.random()*1000) + "\">" + playlistName + "</a>" +"\r\n\t\t\t<\/h>";
+
+    for(i = 0; i < songArtArray.length; i++){
+    var songIcon = document.createElement("img");
+    songIcon.className = "songIcon";
+    songIcon.src = "resources/images/album-art/" + songArtArray[i];
+    newPlaylist.appendChild(songIcon);
+}
+
+    newPlaylist.innerHTML += "\r\n\t\t\t\r\n\t\t\t<div class=\"playlist-info-box\">\r\n\t\t\t\t<div class=\"playlist-heartButton\"><\/div>\r\n\t\t\t\t<div class=\"playlist-likeCount\">\r\n\t\t\t\t" + numLikes + "\r\n\t\t\t\t<\/div>\r\n\t\t\t\t<div class=\"playlist-shareButton\">\r\n\t\t\t\tShare\r\n\t\t\t\t<\/div>\r\n\t\t\t<\/div>";
+    document.getElementsByClassName("feed")[0].appendChild(newPlaylist);
+}
+</script>
