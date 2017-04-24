@@ -37,12 +37,22 @@ class PlaylistController extends Controller
             array_push($songs, $em->getRepository('AppBundle:Song')->find($i));
         }
 
-        //Get collaborators as user objects
+        //Get collaborators as user objects and get their first playlist's album art as a profile picture
         $cids = $playlist->getCollaborators();
         $collaborators = array();
+        $collaboratorsDP = array();
         foreach ($cids as $c) {
             $u = $em->getRepository('AppBundle:User')->find($c);
-            if (!is_null($u)) array_push($collaborators, $u);
+            if (!is_null($u)) {
+                array_push($collaborators, $u);
+                $p = $em->getRepository('AppBundle:Playlist')->findOneBy(array('userID' => $u->getId()));
+                if (!is_null($p)) {
+                    $dp = $p->getArtLink();
+                } else {
+                    $dp = "/resources/images/default-avatar.png";
+                }
+                array_push($collaboratorsDP, $dp);
+            }
         }
 
         return $this->render('users_playlist.html.twig', array(
@@ -53,6 +63,7 @@ class PlaylistController extends Controller
             'authorID' => $playlist->getUserID(),
             'songs' => $songs,
             'collaborators' => $collaborators,
+            'collaboratorsDP' => $collaboratorsDP,
             'editMode' => $editable,
             'canUserEdit' => $this->canUserEdit($playlistID, $this->getUser()),
             'public' => $playlist->getIsPublic()
@@ -103,7 +114,13 @@ class PlaylistController extends Controller
                         $playlist->addCollaborator($collaborator->getId());
                         $em->merge($playlist);
                         $em->flush();
-                        return new JsonResponse(array('success' => true, 'username' => $collaborator->getUsername(), 'userID' => $collaborator->getId()));
+                        $p = $em->getRepository('AppBundle:Playlist')->findOneBy(array('userID' => $collaborator->getId()));
+                        if (!is_null($p)) {
+                            $dp = $p->getArtLink();
+                        } else {
+                            $dp = "/resources/images/default-avatar.png";
+                        }
+                        return new JsonResponse(array('success' => true, 'username' => $collaborator->getUsername(), 'userID' => $collaborator->getId(), 'userDP' => $dp));
                     }
                 }
             }

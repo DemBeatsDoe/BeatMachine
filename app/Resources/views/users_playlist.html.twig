@@ -8,6 +8,8 @@
             background: #eeeeee;
         }
 
+
+
         .playlistHeader {
             height: 130px;
             position: relative;
@@ -57,6 +59,7 @@
             color: #57575a;
             border-collapse: collapse;
             margin-bottom: 10px;
+            margin-top: 50px;
         }
 
         .songsTable tr {
@@ -72,8 +75,16 @@
         .songsTable td {
             padding-top: 9px;
             padding-bottom: 9px;
-            cursor: pointer;
-            cursor: hand;
+
+        }
+
+        .collaboratorDP {
+            width: 50px;
+            height: 50px;
+        }
+
+        #collaboratorList li {
+            display: inline;
         }
 
         .songsTable tbody tr:hover {
@@ -88,6 +99,26 @@
         #editbutton {
             display: inline-block;
             margin: 12px;
+            margin-right:0px;
+
+        }
+        #linkButton {
+            display: inline-block;
+            margin: 12px;
+            margin-right:0px;
+        }
+
+        .songDeleteButton {
+            font-size: 20px;
+            cursor:pointer;
+            margin-right: 5px;
+        }
+        .songDeleteButton:hover {
+            color: #DD0000;
+            transition: ease-in-out 0.1s;
+        }
+        .label-info {
+            background-color: #efeeed;
         }
 
     </style>
@@ -389,6 +420,61 @@
         function copyToClipboard(text) {
             window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
         }
+
+
+        function removeCollaborator(id, element) {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/edit/removeCollaborator", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }} + '&collaboratorID=' + id);
+
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) { //Remove was successful
+                        element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
+                    }
+                }
+            }
+        }
+
+        function addCollaborator(input) {
+            var xxhttp = new XMLHttpRequest();
+            xxhttp.open("POST", "/playlist/edit/addCollaborator", true);
+            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xxhttp.send('playlistID=' + {{ playlistID }} + '&input=' + input);
+
+            //Process the returned data
+            xxhttp.onreadystatechange = function () {
+                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                    var response = JSON.parse(xxhttp.responseText);
+                    if (response.success) { //Add was successful
+                        //Add new user to list
+                        appendCollaborator(response.username, response.userID, response.userDP);
+                    }
+                }
+            }
+        }
+
+        function appendCollaborator(username, userID, userDP) {
+            var li = document.createElement('li');
+
+            li.innerHTML = '<a href="/profile?id=' + userID + '"><img class="collaboratorDP" src="' + userDP + '" title="'+ username +'"></a>';
+
+            document.getElementById('collaboratorList').appendChild(li);
+        }
+
+        $('#addCollabButton').click(function () {
+            addCollaborator($('#collabName').val());
+        });
+
+        $('#collabName').keypress(function (e) { //On enter
+            if (e.which == 13) {
+                addCollaborator($('#collabName').val());
+                return false;
+            }
+        });
     </script>
 {% endblock %}
 
@@ -396,22 +482,35 @@
     <div class="playlistHeader">
         <img class="playlistArt" src="{% if songs is empty %} {{ playlistArt }} {% else %} {{songs[0].artLink}} {% endif %}">
 
-        <span class="collaboratorIcons pull-right">
-            {#                <a href="/playlist/edit/collaborators?id={{ playlistID }}">#}
-            <h4 class="glyphicon glyphicon-edit">Collaborators</h4>
-            <ul style="list-style-type: none; text-align: right;">
+        <span class="collaborators pull-right">
+        <h3>Collaborators</h3>
+            <ul id="collaboratorList">
                 {% for c in collaborators %}
-                    <li><a href="/profile?id={{ c.id }}">{{ c.username }}</a></li>
+                    {% set a = loop.index0 %}
+                    <li><a href="/profile?id={{ c.id }}"><img class="collaboratorDP" src="{{ collaboratorsDP[a] }}" title="{{ c.username|title }}"></a></li>
                 {% endfor %}
             </ul>
-        </span>
 
         {% if editMode %}
-            <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
-            <input value="" type="text" id="textBox1" name="textBox1" class="blur playlistTitle" hidden>
-        {% else %}
-            <div class="playlistTitle">{{ playlistName }}</div>
+            <div style="margin-bottom: 10px; width: 250px;" class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-plus"></i></span>
+                <div style='display:block; float:left; width:80%; margin-right:8px;'>
+                    <input id="collabName" type="url" class="form-control" name="songURL" placeholder="Username / Email">
+                </div>
+            </div>
         {% endif %}
+    </span>
+
+        <span>
+            {% if editMode %}
+                <h3><span class="label label-info clickMe playlistTitle" for="textBox1">{{ playlistName }}</span></h3>
+                <input value="" type="text" id="textBox1" name="textBox1" class="blur playlistTitle" hidden>
+                {% else %}
+                <div class="playlistTitle">{{ playlistName }}</div>
+            {% endif %}
+            </span>
+
+
 
         <div class="playlistAuthor"><a href="/profile?id={{ authorID }}">Created by {{ playlistAuthor }}</a></div>
 
@@ -419,25 +518,21 @@
             {% if editMode %}
                 <span id="editbutton">
                     <a href="/playlist?id={{ playlistID }}">
-                        <button type="button" class="btn btn-default btn-md">
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Done
-                        </button>
+                        <button type="button" class="btn btn-default btn-info btn-md glyphicon glyphicon-ok"></button>
                     </a>
                 </span>
             {% else %}
                 <span id="editbutton">
                     <a href="/playlist/edit?id={{ playlistID }}">
-                        <button type="button" class="btn btn-default btn-md">
-                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
-                        </button>
+                        <button type="button" class="btn btn-default btn-info btn-md glyphicon glyphicon-edit"></button>
                     </a>
                 </span>
             {% endif %}
-
         {% endif %}
+
         <span id="linkButton">
                 <button onclick="getShareLink();" type="button" class="btn btn-default btn-warning btn-md glyphicon glyphicon-link"></button>
-            </span>
+        </span>
     </div>
 
     <table class="songsTable">
@@ -447,6 +542,7 @@
             <th>Length</th>
             <th>Song Name</th>
             <th>Artist</th>
+            {% if editMode %} <th></th> {% endif %}
         </tr>
         </thead>
 
@@ -454,21 +550,21 @@
         {% for song in songs %}
             {% set a = loop.index0 %}
             <div>
-                <tr id="{{ a }}" onclick="playBar.playSongAt({{ a }});">
+                <tr id="{{ a }}" {% if not editMode %}onclick="playBar.playSongAt({{ a }});" style="cursor: pointer;"{% endif %}>
                     <td>{{ song.length }}</td>
                     <td>
                         {% if editMode %}
-                            <span class="clickMe label label-info songName"
+                            <span class="clickMe label label-info songName" style="color: #030303; font-size: 14px; font-weight: 100;"
                                   for="songNameTextbox{{ a }}">{{ song.name }}</span>
                             <input value="" type="text" id="songNameTextbox{{ a }}" name="songNameTextbox{{ a }}"
                                    class="blur songName" hidden>
                         {% else %}
-                            {{ song.name }}
+                            <span id="playingIcon{{ a }}" class="playingIcon glyphicon glyphicon-volume-up" style="margin-right: 10px; display: none;"></span>{{ song.name }}
                         {% endif %}
                     </td>
                     <td>
                         {% if editMode %}
-                            <span class="clickMe label label-info songArtist"
+                            <span class="clickMe label label-info songArtist" style="color: #030303; font-size: 14px; font-weight: 100;"
                                   for="songArtistTextbox{{ a }}">{{ song.artist }}</span>
                             <input value="" type="text" id="songArtistTextbox{{ a }}" name="songArtistTextbox{{ a }}"
                                    class="blur songArtist" hidden>
@@ -479,7 +575,7 @@
                     </td>
                     {% if editMode %}
                         <td>
-                            <button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="deleteSong({{ song.id }}, this);"></button>
+                            <span class="glyphicon glyphicon-remove-circle songDeleteButton" onclick="deleteSong({{ song.id }}, this);"></span>
                         </td>
                     {% endif %}
                 </tr>
@@ -492,11 +588,10 @@
 
     {% if canUserEdit %}
         <div style="margin-bottom: 10px;" class="input-group">
-            <span class="input-group-addon"><i class="glyphicon glyphicon-link"></i></span>
-            <div shorterbox style='display:block; float:left; width:90%; margin-right:8px;'>
+            <span class="input-group-addon"><i class="glyphicon glyphicon-plus"></i></span>
+            <div shorterbox style='display:block; float:left; width:100%; margin-right:8px;'>
                 <input id="songURL" type="url" class="form-control" name="songURL" placeholder="SoundCloud / YouTube URL">
             </div>
-            <button id="addSongButton" type="button" class="btn btn-info btn-circle"><i class="glyphicon glyphicon-plus"></i></button>
         </div>
     {% endif %}
 
@@ -507,8 +602,7 @@
             {% if public %}
                 <button id="makePrivateButton" class="btn btn-warning glyphicon glyphicon-eye-close" onclick="togglePrivate();">Make private</button>
             {% else %}
-                <button id="makePublicButton" class="btn btn-info glyphicon glyphicon-eye-open
-" onclick="togglePrivate();">Make public</button>
+                <button id="makePublicButton" class="btn btn-info glyphicon glyphicon-eye-open" onclick="togglePrivate();">Make public</button>
             {% endif %}
         </div>
 

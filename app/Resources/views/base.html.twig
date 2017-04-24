@@ -52,13 +52,9 @@
                             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ app.user.location }}{% else %}Bath, UK{% endif %}<b class="caret"></b></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="/">My Location</a></li>
-                                        <li class="divider"></li>
                                         <li><a href="/?loc=Bristol, UK">Bristol</a></li>
-                                        <li class="divider"></li>
                                         <li><a href="/?loc=London, UK">London</a></li>
-                                        <li class="divider"></li>
                                         <li><a href="/?loc=Manchester, UK">Manchester</a></li>
-                                        <li class="divider"></li>
                                         <li><a href="/?loc=Paris, UK">Paris</a></li>
                                     </ul>
                                 </li>
@@ -110,7 +106,7 @@
                 </div>#}
                 <div class="playBarSubContainer">
                     <div class="nowPlayingSection pull-left">
-                        <img id="songAlbumArt">
+                        <img id="songAlbumArt" style="display:none;">
                         <div id="songTitleLabel"></div>
                         <div id="songArtistLabel"></div>
                     </div>

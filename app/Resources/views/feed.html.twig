@@ -25,6 +25,8 @@
 
         {% for playlist in playlists %}
             {% set a = loop.index0%}
+            {% set numberSongsToShow = 6 %}
+            {% set showScore = true %}
             {% include 'playlistCard.html.twig' %}
         {% endfor %}
     </div>

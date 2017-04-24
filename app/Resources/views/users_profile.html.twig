@@ -105,29 +105,7 @@
             <div class="profileInfo"><span class="counter">{{ count }}</span>Votes on their Playlists</div>
         </div>
 
-    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-{% if app.user.id == user.id %}
-        <div class="settingsPlaylistCollection" >
 
-         <div class="settings">
-             <div class="settingsTitle">Settings</div>
-                 <form class="form-inline text-center">
-                     <div class="form-group">
-                         <label for="Email">Change Email</label>
-                         <input type="email" class="form-control" placeholder="Enter your new email here">
-                     </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                 </form>
-
-             </div>
-            <br>
-         <div class="text-center">
-             <a href="{{ path('fos_user_change_password') }}" class="btn btn-primary">Change Password</a>
-         </div>
-
-         </div>
-{% endif %}
-        {% endif %}
 
         <div class="playlistCollection">
 
@@ -136,12 +114,34 @@
             {% for playlist in playlists %}
                 {% set location = "Bath, UK" %}
                 {% set a = loop.index0%}
+                {% set numberSongsToShow = 4 %}
+                {% set showScore = false %}
                 {% include 'playlistCard.html.twig' %}
             {% endfor %}
+            </div>
         </div>
-    </div>
 
-    </div>
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        {% if app.user.id == user.id %}
+            <div class="settingsPlaylistCollection" style="margin-top: 50px; background-color: #fefefe;">
+                <div class="settings" >
+                    <div class="settingsTitle">Settings</div>
+                    <form class="form-inline text-center">
+                        <div class="form-group">
+                            <label for="Email">Change Email</label>
+                            <input type="email" class="form-control" placeholder="Enter your new email here">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+                <br>
+                <div class="text-center">
+                    <a href="{{ path('fos_user_change_password') }}" class="btn btn-primary">Change Password</a>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
 {% endblock %}
 
 {% block javascripts %}

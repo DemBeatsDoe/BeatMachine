@@ -298,4 +298,3 @@ class Playlist
         $this->collaborators = array_values($arr);
     }
 }
-

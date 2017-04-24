@@ -1,50 +1,52 @@
 <div class="playlist">
-    <div class="voteButtons">
-        {% set prev = a-1 %}
-        {% set next = a+1 %}
-        {% if prev < 0 %}
-            {% set prev = 0 %}
-        {% endif %}
-        {% if next > playlists|length-1 %}
-            {% set next = playlists|length-1 %}
-        {% endif %}
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-            {% if location==app.user.location  %}
-                <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
-                <br>
-                <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
-                <br>
-                <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down {% if playlist.id in app.user.downVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
+    {% if showScore %}
+        <div class="voteButtons">
+            {% set prev = a-1 %}
+            {% set next = a+1 %}
+            {% if prev < 0 %}
+                {% set prev = 0 %}
+            {% endif %}
+            {% if next > playlists|length-1 %}
+                {% set next = playlists|length-1 %}
+            {% endif %}
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {% if location==app.user.location  %}
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
+                    <br>
+                    <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
+                    <br>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down {% if playlist.id in app.user.downVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
 
+                {% else %}
+
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled" onclick="alert('You can\'t vote here!!!');"></span>
+                    <br>
+                    <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
+                    <br>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled" onclick="alert('You can\'t vote here!!!');"></span>
+                {%  endif %}
             {% else %}
-
-                <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled" onclick="alert('You can\'t vote here!!!');"></span>
+                <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" onclick="window.location = '/login';"></span>
                 <br>
                 <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                 <br>
-                <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled" onclick="alert('You can\'t vote here!!!');"></span>
-            {%  endif %}
-        {% else %}
-            <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" onclick="window.location = '/login';"></span>
-            <br>
-            <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
-            <br>
-            <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down" onclick="window.location = '/login';"></span>
-        {% endif %}
-    </div>
+                <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down" onclick="window.location = '/login';"></span>
+            {% endif %}
+        </div>
+    {% endif %}
 
     <img class="album-art" src="{% if songArt[a] is empty %} {{ playlist.artLink }} {% else %} {{songArt[a][0]}} {% endif %}">
-    <span onclick="setActivePlaylist({{ a }}, 0);" class="playWrapper">
+    <span onclick="setActivePlaylist({{ a }}, 0);" class="playWrapper" {% if not showScore %}style="left: 15px;"{% endif %}>
                 <span class="playBtn"><img src="http://wptf.com/wp-content/uploads/2014/05/play-button.png" width="50" height="50" alt=""></span>
             </span>
-    <h class="playlist-title">
-        <a href="/playlist?id={{ playlist.getId }}">{{ playlist.getName }}</a>
+    <h class="playlist-title" >
+        <a href="/playlist?id={{ playlist.getId }}" {% if not showScore %}style="position: relative; left: -60px;"{% endif %}>{{ playlist.getName }}</a>
     </h>
 
 
     {% for url in songArt[a] %}
         {% set no = loop.index0%}
-        {% if no < 6 and no > 0 %}
+        {% if no < numberSongsToShow and no > 0 %}
             <img onclick="setActivePlaylist({{ a }}, {{ no }});" class="songIcon" src="{{ url }}">
             {#<span onclick="setActivePlaylist({{ a }}, {{ no }});" class="playWrapperSml">
             <span class="playBtn"><img src="http://wptf.com/wp-content/uploads/2014/05/play-button.png" width="50" height="50" alt=""></span>#}
@@ -54,10 +56,12 @@
 
     <div class="playlist-info-box">
         <button class="smallPlayPauseButton" id="playButton{{ a }}" onclick="setActivePlaylist({{ a }}, 0);"><span class="glyphicon glyphicon-play small"></span></button>
+        {% if showScore %}
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
             <div id="fav{{ playlist.id }}" class="playlist-heartButton{% if playlist.id in app.user.likedPlaylists %}-clicked{% endif %}" onclick="toggleFavourite({{ playlist.id }})"></div>
         {% else %}
             <div class="playlist-heartButton" onclick="window.location.replace('/login');"></div>
+        {% endif %}
         {% endif %}
         {#<div class="playlist-shareButton">
             Share

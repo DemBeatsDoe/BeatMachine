@@ -91,6 +91,8 @@ var playBar = (function (jQueryRef) {
     //Function to play a specific song in the playlist
     function playSongAt(index, autoplay=true) {
         //redrawBar(0);
+        $('.playingIcon').hide();
+        $('#playingIcon' + index).show();
         pauseSong();
 
         //Set the song name, artist, art
@@ -102,7 +104,7 @@ var playBar = (function (jQueryRef) {
         }).animate({'opacity': 1}, 500);
 
         $('#songAlbumArt').stop(false, true).animate({'opacity': 0}, 0, function () {
-            $(this).attr('src',playlist[index].art);
+            $(this).attr('src',playlist[index].art).show();
         }).animate({'opacity': 1}, 500);
         //$("#songTitleLabel").text(playlist[index].name);
 

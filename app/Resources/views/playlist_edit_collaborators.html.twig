@@ -2,64 +2,7 @@
 
 {% block javascripts %}
     <script type="text/javascript">
-        function removeCollaborator(id, element) {
-            var xxhttp = new XMLHttpRequest();
-            xxhttp.open("POST", "/playlist/edit/removeCollaborator", true);
-            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xxhttp.send('playlistID=' + {{ playlist.id }} + '&collaboratorID=' + id);
 
-            //Process the returned data
-            xxhttp.onreadystatechange = function () {
-                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
-                    var response = JSON.parse(xxhttp.responseText);
-                    if (response.success) { //Remove was successful
-                        element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
-                    }
-                }
-            }
-        }
-
-        function addCollaborator(input) {
-            var xxhttp = new XMLHttpRequest();
-            xxhttp.open("POST", "/playlist/edit/addCollaborator", true);
-            xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xxhttp.send('playlistID=' + {{ playlist.id }} + '&input=' + input);
-
-            //Process the returned data
-            xxhttp.onreadystatechange = function () {
-                if (xxhttp.readyState == 4 && xxhttp.status == 200) {
-                    var response = JSON.parse(xxhttp.responseText);
-                    if (response.success) { //Add was successful
-                        //Add new user to list
-                        appendCollaborator(response.username, response.userID);
-                    }
-                }
-            }
-        }
-
-        function appendCollaborator(username, userID) {
-            var tr = document.createElement("tr");
-            var name = document.createElement("td");
-            var removeButton = document.createElement("td");
-            tr.appendChild(name);
-            tr.appendChild(removeButton);
-
-            name.innerHTML = '<a href="/profile?id=' + userID + '">' + username + '</a>';
-            removeButton.innerHTML = '<button class="btn btn-circle btn-danger glyphicon glyphicon-remove-circle" onclick="removeCollaborator(' + userID + ', this);"></button>'
-
-            document.getElementById('collaboratorTable').appendChild(tr);
-        }
-
-        $('#addSongButton').click(function () {
-            addCollaborator($('#songURL').val());
-        });
-
-        $('#songURL').keypress(function (e) { //On enter
-            if (e.which == 13) {
-                addCollaborator($('#songURL').val());
-                return false;
-            }
-        });
     </script>
 {% endblock %}
 
