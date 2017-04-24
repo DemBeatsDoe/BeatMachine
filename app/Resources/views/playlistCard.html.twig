@@ -9,7 +9,7 @@
                 {% set next = playlists|length-1 %}
             {% endif %}
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {% if location=='Bath, UK'  %}
+                {% if app.user.location=='Bath, UK' and showScore == true %}
                     <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
                     <br>
                     <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
@@ -32,11 +32,11 @@
         </div>
 
     <img class="album-art" src="{% if songArt[a] is empty %} {{ playlist.artLink }} {% else %} {{songArt[a][0]}} {% endif %}">
-    <span onclick="setActivePlaylist({{ a }}, 0);" class="playWrapper" {% if not showScore %}style="left: 15px;"{% endif %}>
+    <span onclick="setActivePlaylist({{ a }}, 0);" class="playWrapper" >
                 <span class="playBtn"><img src="http://wptf.com/wp-content/uploads/2014/05/play-button.png" width="50" height="50" alt=""></span>
             </span>
     <h class="playlist-title" >
-        <a href="/playlist?id={{ playlist.getId }}" {% if not showScore %}style="position: relative; left: -60px;"{% endif %}>{{ playlist.getName }}</a>
+        <a href="/playlist?id={{ playlist.getId }}" >{{ playlist.getName }}</a>
     </h>
 
 

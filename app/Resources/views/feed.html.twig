@@ -10,12 +10,21 @@
 
         {#<div class="locationLabel" style="margin-top: 120px;">Playlists from {{ location }}</div>#}
 
-        <a class="createPlaylistButton"{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}onclick="createPlaylist()"{% else %}href="/login"{% endif %}>
-            <div class="createPlaylistButtonIcon" ></div>
-            <div class="createPlaylistButtonText">Create Playlist</div>
-        </a>
+        {% set noCreate = false %}
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            {% if app.user.location != 'Bath, UK' %}
+                {% set noCreate = true %}
+            {% endif %}
+        {% endif %}
 
-        <div class="modeSelector">
+        {% if not noCreate %}
+            <a class="createPlaylistButton"{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}onclick="createPlaylist()"{% else %}href="/login"{% endif %}>
+                <div class="createPlaylistButtonIcon" ></div>
+                <div class="createPlaylistButtonText">Create Playlist</div>
+            </a>
+        {% endif %}
+
+        <div class="modeSelector" {% if noCreate %}style="margin-top: 100px;"{% endif %}>
             <a class="modeItem {% if mode=='top' %}modeItemActive{% endif %}"  href="./?mode=top">Popular</a>
             <a class="modeItem {% if mode=='new' %}modeItemActive{% endif %}" href="./?mode=new">New Releases</a>
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
