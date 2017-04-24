@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends Controller
@@ -74,5 +75,26 @@ class ProfileController extends Controller
     }
 
 
+    /**
+     * @Route("/profile/edit/setLocation")
+     */
+    public function changeLocation(Request $request) {
+        $loc = $request->request->get('location');
+        $user = $this->getUser();
+
+        if (!is_null($user) && !is_null($loc)) {
+            $em = $this->getDoctrine()->getManager();
+            $u = $em->getRepository('AppBundle:User')->find($user->getID());
+            if (!is_null($u)) {
+                $u->setLocation($loc);
+                $em->merge($u);
+                $em->flush();
+                //SUCCESS
+                return new JsonResponse(array('success' => true));
+            }
+        }
+        //FAIL
+        return new JsonResponse(array('success' => false));
+    }
 }
 

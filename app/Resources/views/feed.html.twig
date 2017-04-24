@@ -26,7 +26,11 @@
         {% for playlist in playlists %}
             {% set a = loop.index0%}
             {% set numberSongsToShow = 6 %}
-            {% set showScore = true %}
+            {% if location == 'Bath, UK' %}
+                {% set showScore = true %}
+            {% else %}
+                {% set showScore = false %}
+            {% endif %}
             {% include 'playlistCard.html.twig' %}
         {% endfor %}
     </div>

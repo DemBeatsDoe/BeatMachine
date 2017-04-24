@@ -39,6 +39,25 @@
 
         <!--Our JS -->
         <script type="text/javascript" src={{ asset('resources/JavaScript/PlaybarScript.js') }}></script>
+
+        <script>
+            function setLocation(location) {
+                ///profile/edit/setLocation
+                var xxhttp = new XMLHttpRequest();
+                xxhttp.open("POST", "/profile/edit/setLocation", true);
+                xxhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xxhttp.send('location=' + location);
+                //Process the returned data
+                xxhttp.onreadystatechange = function () {
+                    if (xxhttp.readyState == 4 && xxhttp.status == 200) {
+                        var response = JSON.parse(xxhttp.responseText);
+                        if (response.success) {
+                            window.location.reload(true);
+                        }
+                    }
+                }
+            }
+        </script>
     </head>
 
     <body>
@@ -51,11 +70,11 @@
                         <span>
                             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ app.user.location }}{% else %}Bath, UK{% endif %}<b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="/">My Location</a></li>
-                                        <li><a href="/?loc=Bristol, UK">Bristol</a></li>
-                                        <li><a href="/?loc=London, UK">London</a></li>
-                                        <li><a href="/?loc=Manchester, UK">Manchester</a></li>
-                                        <li><a href="/?loc=Paris, UK">Paris</a></li>
+                                        <li><a style="cursor: pointer" onclick="setLocation('Bath, UK');">My Location</a></li>
+                                        <li><a style="cursor: pointer" onclick="setLocation('Bristol, UK');">Bristol</a></li>
+                                        <li><a style="cursor: pointer" onclick="setLocation('London, UK');">London</a></li>
+                                        <li><a style="cursor: pointer" onclick="setLocation('Manchester, UK');">Manchester</a></li>
+                                        <li><a style="cursor: pointer" onclick="setLocation('Paris, FR');">Paris</a></li>
                                     </ul>
                                 </li>
                         </span>

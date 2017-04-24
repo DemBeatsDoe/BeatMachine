@@ -151,6 +151,10 @@ h.playlist-title a{
     border-radius:2px;
     cursor: pointer;
 }
+.songIcon:hover {
+    top: 41px;
+    transition: ease-in-out 0.1s;
+}
 .playlist-info-box{
     position: relative;
     width: 80px;
@@ -299,6 +303,8 @@ h.playlist-title a{
     font-family: 'Lato', sans-serif;
     font-size: 13pt;
     font-weight: 500;
+    cursor: pointer;
+
 }
 .createPlaylistButton:hover .createPlaylistButtonText{
     background-color: #d04000;

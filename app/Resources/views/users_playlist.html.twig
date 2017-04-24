@@ -8,8 +8,6 @@
             background: #eeeeee;
         }
 
-
-
         .playlistHeader {
             height: 130px;
             position: relative;
@@ -27,6 +25,7 @@
         .playlistTitle {
             position: relative;
             left: 10px;
+            padding: 5px;
 
             font-family: 'Lato', sans-serif;
             font-size: 20pt;
@@ -38,10 +37,16 @@
             position: relative;
             left: 10px;
             margin-top: 2px;
+            margin-bottom: 20px;
 
             font-family: 'Lato', sans-serif;
             font-size: 13pt;
             color: #8f8f92;
+        }
+
+        .playlistAuthor a:hover {
+            color: #010101;
+            transition: ease-in-out 0.1s;
         }
 
         .playlistAuthor a {
@@ -83,6 +88,11 @@
             height: 50px;
         }
 
+        .collaboratorDP:hover {
+            background-color: black;
+            opacity: 0.5;
+        }
+
         #collaboratorList li {
             display: inline;
         }
@@ -94,18 +104,6 @@
         .songsTable .playing {
             font-weight: bold;
             color: #2f364a;
-        }
-
-        #editbutton {
-            display: inline-block;
-            margin: 12px;
-            margin-right:0px;
-
-        }
-        #linkButton {
-            display: inline-block;
-            margin: 12px;
-            margin-right:0px;
         }
 
         .songDeleteButton {
@@ -120,7 +118,19 @@
         .label-info {
             background-color: #efeeed;
         }
+        .collaboratorDP {
+            float: right;
+        }
 
+        .buttonList {
+            position: relative;
+            left: 10px;
+        }
+
+        .buttonList li {
+            display: inline;
+            background-color: transparent;
+        }
     </style>
 {% endblock %}
 
@@ -362,7 +372,9 @@
                 .val($(this).text())
                 .toggleClass("form-control")
                 .show()
-                .focus();
+                .focus()
+                .width('70%');
+            $('#textBox1').width(250);
         });
 
         $('.blur').blur(function () {
@@ -465,7 +477,9 @@
             document.getElementById('collaboratorList').appendChild(li);
         }
 
-        $('#addCollabButton').click(function () {
+        $()
+
+        $('#collabButton').click(function () {
             addCollaborator($('#collabName').val());
         });
 
@@ -475,7 +489,7 @@
                 return false;
             }
         });
-    </script>
+        </script>
 {% endblock %}
 
 {% block pagebody %}
@@ -483,23 +497,27 @@
         <img class="playlistArt" src="{% if songs is empty %} {{ playlistArt }} {% else %} {{songs[0].artLink}} {% endif %}">
 
         <span class="collaborators pull-right">
-        <h3>Collaborators</h3>
+            <h4 style="text-align: right;">Collaborators</h4>
             <ul id="collaboratorList">
                 {% for c in collaborators %}
                     {% set a = loop.index0 %}
-                    <li><a href="/profile?id={{ c.id }}"><img class="collaboratorDP" src="{{ collaboratorsDP[a] }}" title="{{ c.username|title }}"></a></li>
+                    <li>
+                        <a href="/profile?id={{ c.id }}">
+                            <img class="collaboratorDP" src="{{ collaboratorsDP[a] }}" title="{{ c.username|title }}">
+                        </a>
+                    </li>
                 {% endfor %}
             </ul>
 
-        {% if editMode %}
-            <div style="margin-bottom: 10px; width: 250px;" class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-plus"></i></span>
-                <div style='display:block; float:left; width:80%; margin-right:8px;'>
-                    <input id="collabName" type="url" class="form-control" name="songURL" placeholder="Username / Email">
+            {% if editMode %}
+                <div style="margin-top: 10px; width: 200px;" class="input-group">
+                    <span id="collabButton" class=" btn input-group-addon"><i class="glyphicon glyphicon-plus"></i></span>
+                    <div style='display:block; float:left; width:100%; margin-right:8px;'>
+                        <input id="collabName" type="url" class="form-control" name="songURL" placeholder="Username / Email">
+                    </div>
                 </div>
-            </div>
-        {% endif %}
-    </span>
+            {% endif %}
+        </span>
 
         <span>
             {% if editMode %}
@@ -508,31 +526,39 @@
                 {% else %}
                 <div class="playlistTitle">{{ playlistName }}</div>
             {% endif %}
-            </span>
+        </span>
 
 
 
         <div class="playlistAuthor"><a href="/profile?id={{ authorID }}">Created by {{ playlistAuthor }}</a></div>
 
-        {% if canUserEdit %}
-            {% if editMode %}
-                <span id="editbutton">
-                    <a href="/playlist?id={{ playlistID }}">
-                        <button type="button" class="btn btn-default btn-info btn-md glyphicon glyphicon-ok"></button>
-                    </a>
-                </span>
-            {% else %}
-                <span id="editbutton">
-                    <a href="/playlist/edit?id={{ playlistID }}">
-                        <button type="button" class="btn btn-default btn-info btn-md glyphicon glyphicon-edit"></button>
-                    </a>
-                </span>
+        <ul class="buttonList">
+            {% if canUserEdit %}
+                {% if editMode %}
+                    <span id="editbutton">
+                        <li>
+                            <a href="/playlist?id={{ playlistID }}">
+                                <button title="Finish editing" type="button" class="btn btn-default btn-info btn-md glyphicon glyphicon-ok"></button>
+                            </a>
+                        </li>
+                    </span>
+                {% else %}
+                    <span id="editbutton">
+                        <li>
+                            <a href="/playlist/edit?id={{ playlistID }}">
+                                <button title="Edit"  type="button" class="btn btn-default btn-info btn-md glyphicon glyphicon-edit"></button>
+                            </a>
+                        </li>
+                    </span>
+                {% endif %}
             {% endif %}
-        {% endif %}
 
-        <span id="linkButton">
-                <button onclick="getShareLink();" type="button" class="btn btn-default btn-warning btn-md glyphicon glyphicon-link"></button>
-        </span>
+            <span id="linkButton">
+                <li>
+                    <button title="Get share link" onclick="getShareLink();" type="button" class="btn btn-default btn-warning btn-md glyphicon glyphicon-link"></button>
+                </li>
+            </span>
+        </ul>
     </div>
 
     <table class="songsTable">
@@ -588,7 +614,7 @@
 
     {% if canUserEdit %}
         <div style="margin-bottom: 10px;" class="input-group">
-            <span class="input-group-addon"><i class="glyphicon glyphicon-plus"></i></span>
+            <span id="addSongButton" class="btn input-group-addon"><i class="glyphicon glyphicon-plus"></i></span>
             <div shorterbox style='display:block; float:left; width:100%; margin-right:8px;'>
                 <input id="songURL" type="url" class="form-control" name="songURL" placeholder="SoundCloud / YouTube URL">
             </div>
@@ -598,11 +624,11 @@
 
     {% if editMode and is_granted("IS_AUTHENTICATED_REMEMBERED") and app.user.id == authorID %}
         <div class="deletePlaylistButton" style="text-align: center; padding-top: 100px;">
-            <button id="deleteButton" class="btn btn-danger glyphicon glyphicon-trash">Delete playlist</button>
+            <button title="Delete playlist" id="deleteButton" class="btn btn-danger glyphicon glyphicon-trash"></button>
             {% if public %}
-                <button id="makePrivateButton" class="btn btn-warning glyphicon glyphicon-eye-close" onclick="togglePrivate();">Make private</button>
+                <button title="Make private" id="makePrivateButton" class="btn btn-warning glyphicon glyphicon-eye-close" onclick="togglePrivate();"></button>
             {% else %}
-                <button id="makePublicButton" class="btn btn-info glyphicon glyphicon-eye-open" onclick="togglePrivate();">Make public</button>
+                <button title="Make public" id="makePublicButton" class="btn btn-info glyphicon glyphicon-eye-open" onclick="togglePrivate();"></button>
             {% endif %}
         </div>
 

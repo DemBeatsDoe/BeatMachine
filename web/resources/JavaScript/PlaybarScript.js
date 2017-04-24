@@ -191,6 +191,7 @@ var playBar = (function (jQueryRef) {
         //ctx.fillRect(0,0, 10,10);
     }
 
+    /*
     $(window).keypress(function (e) {
         if (e.keyCode === 0 || e.keyCode === 32) {
             e.preventDefault();
@@ -198,7 +199,7 @@ var playBar = (function (jQueryRef) {
             return false;
         }
     })
-
+*/
     //Bind widget and set event listeners
     $(function() {
         //Set canvas
