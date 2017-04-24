@@ -1,5 +1,4 @@
 <div class="playlist">
-    {% if showScore %}
         <div class="voteButtons">
             {% set prev = a-1 %}
             {% set next = a+1 %}
@@ -10,20 +9,18 @@
                 {% set next = playlists|length-1 %}
             {% endif %}
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {% if location==app.user.location  %}
+                {% if location=='Bath, UK'  %}
                     <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up {% if playlist.id in app.user.upVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'up', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
                     <br>
                     <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                     <br>
                     <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down {% if playlist.id in app.user.downVotes %}clicked{% endif %}" onclick="vote('{{ playlist.id }}', 'down', 'v{{ playlist.id }}', 'v{{ playlists[prev].id }}', 'v{{ playlists[next].id }}');"></span>
-
                 {% else %}
-
-                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled" onclick="alert('You can\'t vote here!!!');"></span>
+                    <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up disabled"></span>
                     <br>
                     <span id="v{{ playlist.id }}" class="voteCounter">{{ playlist.getVotes }}</span>
                     <br>
-                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled" onclick="alert('You can\'t vote here!!!');"></span>
+                    <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down disabled"></span>
                 {%  endif %}
             {% else %}
                 <span id="u{{ playlist.id }}" class="glyphicon glyphicon-chevron-up" onclick="window.location = '/login';"></span>
@@ -33,7 +30,6 @@
                 <span id="d{{ playlist.id }}" class="glyphicon glyphicon-chevron-down" onclick="window.location = '/login';"></span>
             {% endif %}
         </div>
-    {% endif %}
 
     <img class="album-art" src="{% if songArt[a] is empty %} {{ playlist.artLink }} {% else %} {{songArt[a][0]}} {% endif %}">
     <span onclick="setActivePlaylist({{ a }}, 0);" class="playWrapper" {% if not showScore %}style="left: 15px;"{% endif %}>
@@ -63,8 +59,5 @@
             <div class="playlist-heartButton" onclick="window.location.replace('/login');"></div>
         {% endif %}
         {% endif %}
-        {#<div class="playlist-shareButton">
-            Share
-        </div>#}
     </div>
 </div>
