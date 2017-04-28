@@ -9,3 +9,5 @@ Written in PHP using Symfony.
 
 Authors:
 Alistair Thomson, Chris Frampton, Elise Ratcliffe, Jiew Pornpanit, Matt Buckley, Sophie O'Donnell
+
+All rights reserved. You do not have permission to use this code for personal or commercial usage.
